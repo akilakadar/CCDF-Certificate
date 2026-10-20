@@ -776,22 +776,19 @@
       <div class="video-selector-bar">
         <span style="font-size:13px; color:var(--text-muted); font-weight:500;">Select Video Lecture:</span>
         <select class="custom-select" id="videoSelect" onchange="changeVideoSource()">
-          <option value="SibSI6h6r1U" selected>⭐ 1. Extended Exam Deep-Dive (Cleaned, 12.8 min)</option>
-          <option value="R3cv-kvNmnY">2. Core Syllabus Overview (6.9 min)</option>
-          <option value="oFa6ve51ut8">3. 1080p Comprehensive Masterclass (24.1 min)</option>
-          <option value="niJZkILhKZU">4. Full Complete Lecture (41.6 min)</option>
+          <option value="ccdf_mso_extended_masterclass.mp4" selected>⭐ 1. Extended Exam Deep-Dive (Cleaned, 12.8 min)</option>
+          <option value="ccdf_mso_foundation_masterclass.mp4">2. Core Syllabus Overview (6.9 min)</option>
+          <option value="ccdf_mso3.mp4">3. 1080p Comprehensive Masterclass (24.1 min)</option>
+          <option value="ccdf_mso_1.mp4">4. Full Complete Lecture (41.6 min)</option>
         </select>
       </div>
 
       <!-- VIDEO -->
       <div class="video-wrapper">
-        <iframe id="mainVideo"
-          src="https://www.youtube.com/embed/SibSI6h6r1U?rel=0&modestbranding=1"
-          frameborder="0"
-          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-          allowfullscreen
-          style="width:100%; height:100%; display:block;">
-        </iframe>
+        <video id="mainVideo" controls preload="metadata" poster="CCDF_MSO_Key_Concepts_Infographic.png" style="width:100%; height:100%; display:block;">
+          <source src="ccdf_mso_extended_masterclass.mp4" type="video/mp4">
+          Your browser does not support HTML5 video.
+        </video>
       </div>
 
       <!-- CHAPTER SYNC -->
@@ -1542,9 +1539,10 @@
 
     function changeVideoSource() {
       const select = document.getElementById("videoSelect");
-      const iframe = document.getElementById("mainVideo");
-      const videoId = select.value;
-      iframe.src = `https://www.youtube.com/embed/${videoId}?rel=0&modestbranding=1&autoplay=1`;
+      const video = document.getElementById("mainVideo");
+      video.src = select.value;
+      video.load();
+      video.play().catch(e => console.log("User interaction required for autoplay"));
     }
 
     function toggleInfographic() {
