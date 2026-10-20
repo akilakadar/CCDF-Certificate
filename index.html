@@ -1,0 +1,1558 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CCDF Exam — Model Selection & Optimization: Video & 20-Question Mock Exam</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap"
+    rel="stylesheet">
+  <style>
+    :root {
+      --bg-dark: #090d16;
+      --bg-card: rgba(17, 24, 39, 0.88);
+      --bg-card-hover: rgba(30, 41, 59, 0.95);
+      --border-color: rgba(255, 255, 255, 0.1);
+      --border-accent: rgba(56, 189, 248, 0.35);
+      --primary: #38bdf8;
+      --primary-hover: #0ea5e9;
+      --accent: #818cf8;
+      --accent-purple: #c084fc;
+      --success: #10b981;
+      --warning: #f59e0b;
+      --danger: #ef4444;
+      --text-main: #f8fafc;
+      --text-muted: #94a3b8;
+      --text-dim: #64748b;
+      --radius-lg: 16px;
+      --radius-md: 10px;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background-color: var(--bg-dark);
+      background-image:
+        radial-gradient(circle at 15% 15%, rgba(56, 189, 248, 0.08) 0%, transparent 40%),
+        radial-gradient(circle at 85% 85%, rgba(129, 140, 248, 0.08) 0%, transparent 40%);
+      color: var(--text-main);
+      font-family: 'Outfit', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      min-height: 100vh;
+      line-height: 1.5;
+    }
+
+    header {
+      background: rgba(10, 15, 28, 0.88);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border-color);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      padding: 12px 24px;
+    }
+
+    .nav-container {
+      max-width: 1750px;
+      margin: 0 auto;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 16px;
+    }
+
+    .brand-section {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+
+    .badge-ccdf {
+      background: linear-gradient(135deg, #38bdf8, #6366f1);
+      color: #030712;
+      font-weight: 800;
+      font-size: 13px;
+      padding: 4px 10px;
+      border-radius: 6px;
+      letter-spacing: 0.5px;
+    }
+
+    .brand-title {
+      font-size: 19px;
+      font-weight: 700;
+      background: linear-gradient(90deg, #f8fafc, #38bdf8);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .brand-sub {
+      font-size: 13px;
+      color: var(--text-muted);
+    }
+
+    .header-actions {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .nav-btn {
+      background: rgba(255, 255, 255, 0.06);
+      border: 1px solid var(--border-color);
+      color: var(--text-main);
+      padding: 8px 16px;
+      border-radius: 8px;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      transition: all 0.2s ease;
+      text-decoration: none;
+    }
+
+    .nav-btn:hover,
+    .nav-btn.active {
+      background: rgba(56, 189, 248, 0.15);
+      border-color: var(--primary);
+      color: var(--primary);
+    }
+
+    .app-layout {
+      max-width: 1750px;
+      margin: 20px auto;
+      padding: 0 20px;
+      display: grid;
+      grid-template-columns: 1.1fr 1fr;
+      gap: 24px;
+    }
+
+    @media (max-width: 1200px) {
+      .app-layout {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .glass-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-lg);
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .card-header {
+      padding: 16px 20px;
+      border-bottom: 1px solid var(--border-color);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: rgba(255, 255, 255, 0.02);
+    }
+
+    .card-title {
+      font-size: 16px;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      color: #e2e8f0;
+    }
+
+    .video-wrapper {
+      position: relative;
+      background: #000;
+      aspect-ratio: 16 / 9;
+      width: 100%;
+    }
+
+    video {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      display: block;
+    }
+
+    .video-selector-bar {
+      padding: 12px 16px;
+      background: rgba(15, 23, 42, 0.7);
+      border-bottom: 1px solid var(--border-color);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .custom-select {
+      background: rgba(30, 41, 59, 0.9);
+      color: var(--text-main);
+      border: 1px solid var(--border-color);
+      padding: 6px 12px;
+      border-radius: 6px;
+      font-size: 13px;
+      font-family: inherit;
+      outline: none;
+      cursor: pointer;
+    }
+
+    .syllabus-accordion {
+      padding: 16px;
+      overflow-y: auto;
+      max-height: 520px;
+    }
+
+    .chapter-card {
+      background: rgba(30, 41, 59, 0.4);
+      border: 1px solid rgba(255, 255, 255, 0.05);
+      border-radius: 10px;
+      padding: 12px 14px;
+      margin-bottom: 10px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      display: flex;
+      gap: 12px;
+      align-items: flex-start;
+    }
+
+    .chapter-card:hover {
+      background: rgba(56, 189, 248, 0.1);
+      border-color: var(--border-accent);
+      transform: translateX(3px);
+    }
+
+    .chapter-num {
+      background: rgba(56, 189, 248, 0.2);
+      color: var(--primary);
+      width: 26px;
+      height: 26px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 6px;
+      font-weight: 700;
+      font-size: 12px;
+      flex-shrink: 0;
+    }
+
+    .chapter-info h4 {
+      font-size: 14px;
+      font-weight: 600;
+      color: #f1f5f9;
+      margin-bottom: 4px;
+    }
+
+    .chapter-info p {
+      font-size: 12px;
+      color: var(--text-muted);
+      line-height: 1.4;
+    }
+
+    .chapter-tags {
+      display: flex;
+      gap: 6px;
+      margin-top: 6px;
+      flex-wrap: wrap;
+    }
+
+    .tag {
+      font-size: 11px;
+      padding: 2px 7px;
+      border-radius: 4px;
+      background: rgba(255, 255, 255, 0.06);
+      color: var(--text-muted);
+    }
+
+    /* EXAM */
+    .exam-header {
+      padding: 14px 20px;
+      background: rgba(15, 23, 42, 0.9);
+      border-bottom: 1px solid var(--border-color);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    .exam-progress-wrap {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      flex-grow: 1;
+      max-width: 400px;
+    }
+
+    .progress-bar-bg {
+      flex-grow: 1;
+      height: 8px;
+      background: rgba(255, 255, 255, 0.08);
+      border-radius: 4px;
+      overflow: hidden;
+    }
+
+    .progress-bar-fill {
+      height: 100%;
+      width: 5%;
+      background: linear-gradient(90deg, #38bdf8, #818cf8);
+      transition: width 0.3s ease;
+    }
+
+    .progress-text {
+      font-size: 12px;
+      font-family: 'JetBrains Mono', monospace;
+      color: var(--text-muted);
+      white-space: nowrap;
+    }
+
+    .timer-badge {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      background: rgba(239, 68, 68, 0.15);
+      border: 1px solid rgba(239, 68, 68, 0.3);
+      color: #fca5a5;
+      font-size: 13px;
+      font-family: 'JetBrains Mono', monospace;
+      padding: 4px 10px;
+      border-radius: 6px;
+      font-weight: 600;
+    }
+
+    .question-nav-strip {
+      display: flex;
+      gap: 6px;
+      padding: 10px 16px;
+      background: rgba(2, 6, 23, 0.6);
+      border-bottom: 1px solid var(--border-color);
+      overflow-x: auto;
+      scrollbar-width: thin;
+    }
+
+    .q-pill {
+      min-width: 32px;
+      height: 32px;
+      border-radius: 6px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 11px;
+      font-weight: 700;
+      background: rgba(255, 255, 255, 0.05);
+      color: var(--text-muted);
+      border: 1px solid transparent;
+      cursor: pointer;
+      transition: all 0.2s;
+      flex-shrink: 0;
+    }
+
+    .q-pill:hover {
+      background: rgba(255, 255, 255, 0.12);
+      color: #fff;
+    }
+
+    .q-pill.active {
+      border-color: var(--primary);
+      background: rgba(56, 189, 248, 0.2);
+      color: var(--primary);
+      box-shadow: 0 0 10px rgba(56, 189, 248, 0.25);
+    }
+
+    .q-pill.answered {
+      background: rgba(129, 140, 248, 0.25);
+      color: #c7d2fe;
+    }
+
+    .q-pill.correct-mark {
+      background: rgba(16, 185, 129, 0.25);
+      color: #6ee7b7;
+      border-color: rgba(16, 185, 129, 0.4);
+    }
+
+    .q-pill.wrong-mark {
+      background: rgba(239, 68, 68, 0.25);
+      color: #fca5a5;
+      border-color: rgba(239, 68, 68, 0.4);
+    }
+
+    .exam-body {
+      padding: 24px;
+      overflow-y: auto;
+      max-height: 600px;
+      flex-grow: 1;
+    }
+
+    .question-meta {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 12px;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .domain-tag {
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--primary);
+      background: rgba(56, 189, 248, 0.12);
+      padding: 3px 9px;
+      border-radius: 4px;
+      border: 1px solid rgba(56, 189, 248, 0.25);
+    }
+
+    .select-rule {
+      font-size: 12px;
+      color: #fbbf24;
+      font-weight: 600;
+    }
+
+    .question-text {
+      font-size: 16px;
+      font-weight: 500;
+      color: #f8fafc;
+      line-height: 1.6;
+      margin-bottom: 20px;
+    }
+
+    .options-list {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .option-item {
+      background: rgba(30, 41, 59, 0.5);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 10px;
+      padding: 12px 16px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+    }
+
+    .option-item:hover {
+      background: rgba(56, 189, 248, 0.08);
+      border-color: rgba(56, 189, 248, 0.4);
+    }
+
+    .option-item.selected {
+      background: rgba(56, 189, 248, 0.16);
+      border-color: var(--primary);
+      box-shadow: 0 0 15px rgba(56, 189, 248, 0.15);
+    }
+
+    .option-item.correct-revealed {
+      background: rgba(16, 185, 129, 0.18) !important;
+      border-color: var(--success) !important;
+    }
+
+    .option-item.wrong-revealed {
+      background: rgba(239, 68, 68, 0.18) !important;
+      border-color: var(--danger) !important;
+    }
+
+    .opt-letter {
+      width: 24px;
+      height: 24px;
+      border-radius: 6px;
+      background: rgba(255, 255, 255, 0.1);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 12px;
+      font-weight: 700;
+      flex-shrink: 0;
+      margin-top: 1px;
+    }
+
+    .option-item.selected .opt-letter {
+      background: var(--primary);
+      color: #030712;
+    }
+
+    .opt-text {
+      font-size: 14px;
+      color: #e2e8f0;
+      line-height: 1.5;
+    }
+
+    .explanation-box {
+      margin-top: 20px;
+      padding: 16px;
+      border-radius: 10px;
+      background: rgba(15, 23, 42, 0.9);
+      border-left: 4px solid var(--primary);
+      display: none;
+    }
+
+    .explanation-box.active {
+      display: block;
+      animation: fadeIn 0.3s ease;
+    }
+
+    .exp-title {
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--primary);
+      margin-bottom: 6px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .exp-content {
+      font-size: 13px;
+      color: #cbd5e1;
+      line-height: 1.55;
+    }
+
+    .why-not-others {
+      margin-top: 10px;
+      padding-top: 8px;
+      border-top: 1px solid rgba(255, 255, 255, 0.1);
+      font-size: 12px;
+      color: var(--text-muted);
+    }
+
+    .exam-footer {
+      padding: 14px 20px;
+      background: rgba(15, 23, 42, 0.85);
+      border-top: 1px solid var(--border-color);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .btn {
+      padding: 10px 18px;
+      border-radius: 8px;
+      font-size: 13px;
+      font-weight: 600;
+      font-family: inherit;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      border: 1px solid transparent;
+      transition: all 0.2s ease;
+    }
+
+    .btn-secondary {
+      background: rgba(255, 255, 255, 0.08);
+      color: var(--text-main);
+      border-color: var(--border-color);
+    }
+
+    .btn-secondary:hover {
+      background: rgba(255, 255, 255, 0.15);
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, #38bdf8, #2563eb);
+      color: #ffffff;
+      box-shadow: 0 4px 14px rgba(37, 99, 235, 0.35);
+    }
+
+    .btn-primary:hover {
+      background: linear-gradient(135deg, #0ea5e9, #1d4ed8);
+      transform: translateY(-1px);
+    }
+
+    .btn-success {
+      background: linear-gradient(135deg, #10b981, #059669);
+      color: #fff;
+    }
+
+    .results-view {
+      display: none;
+      padding: 30px;
+      text-align: center;
+    }
+
+    .results-view.active {
+      display: block;
+      animation: fadeIn 0.4s ease;
+    }
+
+    .score-circle {
+      width: 140px;
+      height: 140px;
+      border-radius: 50%;
+      margin: 0 auto 20px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .score-circle.pass {
+      background: radial-gradient(circle, rgba(16, 185, 129, 0.2) 0%, rgba(16, 185, 129, 0.05) 70%);
+      border: 4px solid var(--success);
+      box-shadow: 0 0 30px rgba(16, 185, 129, 0.3);
+    }
+
+    .score-circle.fail {
+      background: radial-gradient(circle, rgba(239, 68, 68, 0.2) 0%, rgba(239, 68, 68, 0.05) 70%);
+      border: 4px solid var(--danger);
+      box-shadow: 0 0 30px rgba(239, 68, 68, 0.3);
+    }
+
+    .score-val {
+      font-size: 38px;
+      font-weight: 800;
+      color: #fff;
+      font-family: 'JetBrains Mono', monospace;
+    }
+
+    .score-label {
+      font-size: 12px;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      font-weight: 600;
+    }
+
+    .result-verdict {
+      font-size: 24px;
+      font-weight: 700;
+      margin-bottom: 8px;
+    }
+
+    .result-verdict.pass-text {
+      color: var(--success);
+    }
+
+    .result-verdict.fail-text {
+      color: var(--danger);
+    }
+
+    .score-breakdown-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 14px;
+      margin: 24px 0;
+      text-align: left;
+    }
+
+    .stat-card {
+      background: rgba(30, 41, 59, 0.6);
+      border: 1px solid var(--border-color);
+      border-radius: 10px;
+      padding: 14px;
+    }
+
+    .stat-label {
+      font-size: 12px;
+      color: var(--text-muted);
+      margin-bottom: 4px;
+    }
+
+    .stat-val {
+      font-size: 20px;
+      font-weight: 700;
+      color: #f1f5f9;
+    }
+
+    .modal-backdrop {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.85);
+      backdrop-filter: blur(8px);
+      z-index: 999;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+
+    .modal-backdrop.active {
+      display: flex;
+    }
+
+    .modal-window {
+      background: #0f172a;
+      border: 1px solid var(--border-accent);
+      border-radius: var(--radius-lg);
+      max-width: 1200px;
+      width: 100%;
+      max-height: 90vh;
+      overflow-y: auto;
+      padding: 24px;
+      position: relative;
+    }
+
+    .close-modal {
+      position: absolute;
+      top: 16px;
+      right: 16px;
+      background: rgba(255, 255, 255, 0.1);
+      border: none;
+      color: #fff;
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      cursor: pointer;
+      font-size: 16px;
+    }
+
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(6px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <header>
+    <div class="nav-container">
+      <div class="brand-section">
+        <span class="badge-ccdf">CCDF CERTIFICATION</span>
+        <div>
+          <div class="brand-title">Model Selection & Optimization — 20 Authentic CCDF Practice Questions</div>
+
+        </div>
+      </div>
+
+      <div class="header-actions">
+        <button class="nav-btn" onclick="toggleInfographic()">
+          <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+              d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z">
+            </path>
+          </svg>
+          Syllabus Study Guide
+        </button>
+        <button class="nav-btn active" id="modeBtn" onclick="toggleInstantFeedback()">
+          Mode: <span id="modeText" style="color:#38bdf8; font-weight:700;">Live Study (Instant Explanations)</span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <div class="app-layout">
+
+    <!-- LEFT: VIDEO & SYLLABUS -->
+    <div class="glass-card">
+      <div class="card-header">
+        <div class="card-title">
+          <svg width="18" height="18" fill="none" stroke="#38bdf8" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+              d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z">
+            </path>
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+              d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+          </svg>
+          Video Masterclass & Overview
+        </div>
+        <div style="font-size: 12px; color: var(--success); font-weight:600;">
+
+        </div>
+      </div>
+
+      <!-- VIDEO SELECTOR -->
+      <div class="video-selector-bar">
+        <span style="font-size:13px; color:var(--text-muted); font-weight:500;">Select Video Lecture:</span>
+        <select class="custom-select" id="videoSelect" onchange="changeVideoSource()">
+          <option value="ccdf_mso_extended_masterclass.mp4" selected>⭐ 1. Extended Exam Deep-Dive (Cleaned, 12.8 min)
+          </option>
+          <option value="ccdf_mso_foundation_masterclass.mp4">2. Core Syllabus Overview (6.9 min)</option>
+          <option value="ccdf_mso3.mp4">3. 1080p Comprehensive Masterclass (24.1 min)</option>
+          <option value="ccdf_mso_1.mp4">4. Full Complete Lecture (41.6 min)</option>
+        </select>
+      </div>
+
+      <!-- VIDEO -->
+      <div class="video-wrapper">
+        <video id="mainVideo" controls poster="CCDF_MSO_Key_Concepts_Infographic.png">
+          <source src="ccdf_mso_extended_masterclass.mp4" type="video/mp4">
+          Your browser does not support HTML5 video.
+        </video>
+      </div>
+
+      <!-- CHAPTER SYNC -->
+      <div class="card-header" style="background: rgba(0,0,0,0.2);">
+        <div class="card-title" style="font-size: 14px;">
+          <span>Syllabus Breakdown (Click any module to jump to relevant questions)</span>
+        </div>
+      </div>
+
+      <div class="syllabus-accordion">
+
+        <div class="chapter-card" onclick="jumpToExamQuestion(0)">
+          <div class="chapter-num">1</div>
+          <div class="chapter-info">
+            <h4>Capability, Latency, Cost, Context & Task Fit</h4>
+            <p>Trade-off matrix: Opus (deep reasoning), Sonnet (balanced enterprise default), Haiku (high-volume
+              classification). LLMs are non-deterministic even at temperature=0.</p>
+            <div class="chapter-tags">
+              <span class="tag">Temperature & Determinism</span>
+              <span class="tag">Questions 1, 5, 11</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="chapter-card" onclick="jumpToExamQuestion(1)">
+          <div class="chapter-num">2</div>
+          <div class="chapter-info">
+            <h4>Context Budget & Shared Window Rules</h4>
+            <p>Input tokens and reserved output (max_tokens) share the exact same window limit. 190,000 + 20,000 =
+              210,000 > 200,000 ceiling. Unnecessary context slows TTFT.</p>
+            <div class="chapter-tags">
+              <span class="tag">Context Budget</span>
+              <span class="tag">Questions 2, 17, 18</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="chapter-card" onclick="jumpToExamQuestion(2)">
+          <div class="chapter-num">3</div>
+          <div class="chapter-info">
+            <h4>Concise Prompts & Multi-Shot Examples</h4>
+            <p>When formatting drifts across runs, multi-shot examples (2-3 concrete demonstrations) beat descriptive
+              text. Delimiters separate data from instructions.</p>
+            <div class="chapter-tags">
+              <span class="tag">Few-Shot Prompting</span>
+              <span class="tag">Questions 3, 16</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="chapter-card" onclick="jumpToExamQuestion(3)">
+          <div class="chapter-num">4</div>
+          <div class="chapter-info">
+            <h4>Adaptive Thinking, Tokens & Fast Mode</h4>
+            <p>Current Claude models use adaptive thinking with the <code>effort</code> parameter for cost trade-off.
+              Fast mode delivers up to 2.5x token speed for latency-critical Opus debugging.</p>
+            <div class="chapter-tags">
+              <span class="tag">Effort Parameter</span>
+              <span class="tag">Fast Mode</span>
+              <span class="tag">Questions 4, 9, 10</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="chapter-card" onclick="jumpToExamQuestion(7)">
+          <div class="chapter-num">5</div>
+          <div class="chapter-info">
+            <h4>Prompt Caching Mechanics & Prefix Rules</h4>
+            <p>Writes cost +25% premium, reads get 90% discount with 5-min TTL. Caching is prefix-based: placing dynamic
+              content before static knowledge invalidates the cache.</p>
+            <div class="chapter-tags">
+              <span class="tag">Cache Reads vs Writes</span>
+              <span class="tag">Prefix Invalidation</span>
+              <span class="tag">Questions 8, 12</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="chapter-card" onclick="jumpToExamQuestion(10)">
+          <div class="chapter-num">6</div>
+          <div class="chapter-info">
+            <h4>Batch API, Rate Limits & Fallback Resilience</h4>
+            <p>Message Batches API cuts costs by 50% for 24h asynchronous workloads. Handle 429/529 with exponential
+              backoff and jitter. Pin model snapshots in production.</p>
+            <div class="chapter-tags">
+              <span class="tag">Batches API (50% Off)</span>
+              <span class="tag">Exponential Backoff</span>
+              <span class="tag">Questions 11, 13, 14, 15</span>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- RIGHT: 20-QUESTION MOCK EXAM -->
+    <div class="glass-card">
+
+      <div class="exam-header">
+        <div class="exam-progress-wrap">
+          <div class="progress-bar-bg">
+            <div class="progress-bar-fill" id="progressBar"></div>
+          </div>
+          <div class="progress-text" id="progressText">Q 1 of 20</div>
+        </div>
+
+        <div class="timer-badge">
+          <svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <circle cx="12" cy="12" r="10" stroke-width="2"></circle>
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6l4 2"></path>
+          </svg>
+          <span id="examTimer">35:00</span>
+        </div>
+      </div>
+
+      <!-- QUESTION QUICK NAVIGATOR (1 TO 20) -->
+      <div class="question-nav-strip" id="navStrip">
+        <!-- Rendered dynamically -->
+      </div>
+
+      <!-- QUESTION BODY -->
+      <div class="exam-body" id="questionContainer">
+
+        <div class="question-meta">
+          <span class="domain-tag" id="domainTag">Domain 5: Model Selection & Optimization</span>
+          <span class="select-rule" id="selectRule">Single Choice · select ONE</span>
+        </div>
+
+        <div class="question-text" id="questionText">
+          Loading question from 1784425506971.pdf...
+        </div>
+
+        <div class="options-list" id="optionsContainer">
+          <!-- Rendered dynamically -->
+        </div>
+
+        <!-- EXPLANATION ACCORDION -->
+        <div class="explanation-box" id="explanationBox">
+          <div class="exp-title">
+            <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+            </svg>
+            Official Exam Guide Rationale (from 1784425506971.pdf)
+          </div>
+          <div class="exp-content" id="expCorrectText"></div>
+          <div class="why-not-others" id="expWhyNotText"></div>
+        </div>
+
+      </div>
+
+      <!-- RESULTS SUMMARY SCREEN -->
+      <div class="results-view" id="resultsView">
+        <div class="score-circle" id="scoreCircle">
+          <div class="score-val" id="scorePercent">0%</div>
+          <div class="score-label">Final Score</div>
+        </div>
+
+        <div class="result-verdict" id="resultVerdict">Exam Complete</div>
+        <p style="color: var(--text-muted); font-size: 14px; max-width: 500px; margin: 0 auto 20px;" id="resultMessage">
+          Passing score for the official CCDF certification is 70%.
+        </p>
+
+        <div class="score-breakdown-grid">
+          <div class="stat-card">
+            <div class="stat-label">Total Questions</div>
+            <div class="stat-val">20</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-label">Correct Answers</div>
+            <div class="stat-val" style="color:var(--success)" id="statCorrect">0</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-label">Incorrect Answers</div>
+            <div class="stat-val" style="color:var(--danger)" id="statWrong">0</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-label">Passing Standard</div>
+            <div class="stat-val" style="color:var(--primary)">70% (14 / 20)</div>
+          </div>
+        </div>
+
+        <div style="display:flex; justify-content:center; gap:12px; margin-top:20px; flex-wrap:wrap;">
+          <button class="btn btn-secondary" onclick="reviewExamQuestions()">Review All 20 Answers</button>
+          <button class="btn btn-primary" onclick="restartExam()">Retake Full Exam</button>
+        </div>
+      </div>
+
+      <!-- FOOTER CONTROLS -->
+      <div class="exam-footer" id="examFooter">
+        <button class="btn btn-secondary" id="prevBtn" onclick="prevQuestion()" disabled>
+          &larr; Previous
+        </button>
+
+        <div style="display: flex; gap: 8px;">
+          <button class="btn btn-secondary" id="explainBtn" onclick="toggleCurrentExplanation()">
+            Show Rationale
+          </button>
+          <button class="btn btn-primary" id="nextBtn" onclick="nextQuestion()">
+            Next &rarr;
+          </button>
+          <button class="btn btn-success" id="submitBtn" onclick="submitExam()" style="display:none;">
+            Submit Full Exam
+          </button>
+        </div>
+      </div>
+
+    </div>
+
+  </div>
+
+  <!-- MODAL: INFOGRAPHIC -->
+  <div class="modal-backdrop" id="infoModal" onclick="closeModalOnBackdrop(event)">
+    <div class="modal-window">
+      <button class="close-modal" onclick="toggleInfographic()">&times;</button>
+      <h3 style="margin-bottom: 14px; font-size: 18px; color: var(--primary);">CCDF Exam – Model Selection &
+        Optimization Study Guide</h3>
+      <img src="CCDF_MSO_Key_Concepts_Infographic.png" alt="Syllabus Infographic"
+        style="width:100%; height:auto; border-radius: 8px; border: 1px solid var(--border-color);">
+    </div>
+  </div>
+
+  <script>
+    // ==============================================================================
+    // 20 AUTHENTIC CCDF QUESTIONS FROM 1784425506971.pdf (EXAM GUIDE v1.0)
+    // Covering: Model Selection, Latency, Cost, Context, Batches API, SDKs & Evals
+    // ==============================================================================
+    const examQuestions = [
+      {
+        id: "Q1 (5.1)",
+        domain: "Domain 5: Model Selection and Optimization",
+        type: "single",
+        text: "A compliance team requires that identical inputs to a Claude application always produce byte-identical outputs, and an engineer proposes setting temperature to 0 to guarantee it. What is the accurate understanding?",
+        options: [
+          { key: "A", text: "Temperature 0 removes all randomness from the sampling process, so identical inputs are guaranteed to produce byte-identical outputs on every single run" },
+          { key: "B", text: "Determinism can be guaranteed by also fixing max_tokens" },
+          { key: "C", text: "LLM generation is not guaranteed deterministic even at temperature 0; design the application to tolerate variation, using validation and evals" },
+          { key: "D", text: "Non-determinism only occurs when streaming is enabled" }
+        ],
+        correct: ["C"],
+        explanation: "LLM generation is not guaranteed deterministic even at temperature 0. Due to floating-point non-associativity across massively parallel GPU clusters and architectural variations, identical inputs can produce slight token differences. Applications must be designed to tolerate variation using strict output validation schemas and eval suites.",
+        whyNot: "A is incorrect because sampling at temp 0 minimizes entropy but cannot eliminate hardware parallelization non-determinism. B is false because fixing max_tokens only limits response ceiling. D is false because streaming uses the exact same underlying autoregressive sampling mechanism."
+      },
+      {
+        id: "Q2 (5.2)",
+        domain: "Domain 5: Model Selection and Optimization",
+        type: "single",
+        text: "An application submits a 190,000-token document to a model with a 200,000-token context window and requests max_tokens of 20,000. The request is rejected. Why?",
+        options: [
+          { key: "A", text: "Documents over 100,000 tokens must always use the Batches API" },
+          { key: "B", text: "The context window is shared by input and output: 190,000 input tokens plus a 20,000-token output budget exceeds the window" },
+          { key: "C", text: "max_tokens cannot exceed 10% of the input size" },
+          { key: "D", text: "The context window applies only to output tokens, so the oversized input document must be the source of the problem with this request" }
+        ],
+        correct: ["B"],
+        explanation: "The context window is a single unified budget covering both input tokens and the reserved max_tokens output allowance. 190,000 input tokens + 20,000 requested output tokens = 210,000 tokens, which exceeds the 200,000 limit. Large inputs require trimming, chunking, or a smaller max_tokens reservation.",
+        whyNot: "A and C describe fictional rules that do not exist in the Anthropic API. D completely inverts how the context window works."
+      },
+      {
+        id: "Q3 (5.3)",
+        domain: "Domain 5: Model Selection and Optimization",
+        type: "single",
+        text: "A model returns correct information but formats it differently on every call — sometimes bullet points, sometimes tables, sometimes prose — despite a written instruction describing the desired format. What is the most effective prompting fix?",
+        options: [
+          { key: "A", text: "Raise the temperature so the model explores more formatting possibilities and eventually settles on one format by itself" },
+          { key: "B", text: "Remove the formatting instruction so the model stops overthinking" },
+          { key: "C", text: "Repeat the instruction at the start and end of the prompt" },
+          { key: "D", text: "Add multi-shot examples: two or three sample inputs each paired with output in exactly the desired format" }
+        ],
+        correct: ["D"],
+        explanation: "When format matters, showing beats telling. Multi-shot examples demonstrate the target structure concretely, and the model patterns its generation after concrete demonstrations far more reliably than on abstract written prose.",
+        whyNot: "A increases generation variance—the opposite of formatting consistency. B deletes the only directive in place. C provides marginal benefit at best, whereas demonstrations fundamentally guide formatting."
+      },
+      {
+        id: "Q4 (5.4)",
+        domain: "Domain 5: Model Selection and Optimization",
+        type: "single",
+        text: "A developer is migrating an application from an older Claude model that used a manually configured extended thinking token budget. For the current model generation, they want Claude to decide for itself when and how deeply to reason, while retaining a lever to trade reasoning depth against token cost. Which configuration achieves this?",
+        options: [
+          { key: "A", text: "Keep setting a large budget_tokens value, since a fixed thinking budget remains the recommended control on current models" },
+          { key: "B", text: "Enable adaptive thinking and use the effort parameter as soft guidance on how much reasoning Claude applies" },
+          { key: "C", text: "Enable fast mode, which reduces the amount of reasoning the model performs so responses complete sooner" },
+          { key: "D", text: "Set temperature to zero, which disables thinking entirely and forces the model to answer directly" }
+        ],
+        correct: ["B"],
+        explanation: "In adaptive thinking mode, Claude evaluates request complexity dynamically and decides whether and how much to use extended reasoning. The 'effort' parameter acts as soft guidance on how much reasoning Claude applies. Lower effort levels reduce reasoning token consumption and cut cost, giving the precise depth-versus-cost control desired.",
+        whyNot: "A: budget_tokens is deprecated on current models in favor of adaptive thinking with the effort parameter. C: fast mode adjusts output token generation speed at premium pricing, not internal reasoning depth. D: temperature controls sampling entropy and does not disable thinking."
+      },
+      {
+        id: "Q5 (5.5)",
+        domain: "Domain 5: Model Selection and Optimization",
+        type: "single",
+        text: "A retailer needs to assign one of six category labels to five million short product descriptions per day. The task is simple, latency budgets are tight, and unit cost dominates the business case. Which model tier is the appropriate starting point?",
+        options: [
+          { key: "A", text: "Opus, because classification accuracy on customer-facing data always justifies the strongest and most capable model available" },
+          { key: "B", text: "Sonnet, because mid-tier is the safest default for any workload" },
+          { key: "C", text: "Haiku, the fast, low-cost tier suited to simple high-volume tasks — validated with an eval first" },
+          { key: "D", text: "Alternate between tiers randomly to average out the cost" }
+        ],
+        correct: ["C"],
+        explanation: "Simple classification, extreme daily volume (5,000,000 requests), tight latency, and hard unit-cost economics define the classic Claude Haiku workload profile. Best practice is to validate on a small benchmark eval set first, then deploy Haiku for massive cost savings.",
+        whyNot: "A incurs massive cost overhead for capability headroom a 6-category classifier never utilizes. B defaults by assumption rather than profiling task fit. D is arbitrary gambling, not an engineering strategy."
+      },
+      {
+        id: "Q6 (5.6)",
+        domain: "Domain 5: Model Selection and Optimization",
+        type: "single",
+        text: "A new Claude model release offers better benchmark scores at a lower price, and the team wants to migrate a production application to it. What must they account for before cutting over?",
+        options: [
+          { key: "A", text: "Nothing — newer models are strict supersets, so behaviour can only improve" },
+          { key: "B", text: "Model releases can include breaking behaviour changes — formatting, instruction-following, tool use — so validate by running the application’s eval suite against the new model first" },
+          { key: "C", text: "Only pricing changes matter; behaviour is standardised across releases" },
+          { key: "D", text: "They should wait at least a year before adopting it, since newly released models cannot be relied upon in production environments until the wider community has fully proven them out" }
+        ],
+        correct: ["B"],
+        explanation: "A model release is a behavioral change, not a simple bug fix. Prompts and tools optimized for one model version can trigger regressions, altered formatting, or tool-calling anomalies on another. The application's automated evaluation suite must be run first to compare benchmark metrics before production cutover.",
+        whyNot: "A and C are false assumptions that cause real-world production outages. D invents an arbitrary constraint."
+      },
+      {
+        id: "Q7 (5.7)",
+        domain: "Domain 5: Model Selection and Optimization",
+        type: "single",
+        text: "A team is deciding between calling the REST API directly with hand-rolled HTTP code and using an official Anthropic client SDK. What does the SDK primarily provide?",
+        options: [
+          { key: "A", text: "Lower per-token pricing for SDK-originated requests" },
+          { key: "B", text: "Access to models that the REST API does not expose" },
+          { key: "C", text: "A contractual guarantee that requests sent through the SDK will never be rate-limited, no matter how much traffic the application sends" },
+          { key: "D", text: "A typed wrapper over the REST API handling authentication, request construction, error types, retries, and streaming parsing" }
+        ],
+        correct: ["D"],
+        explanation: "Official SDKs provide a well-maintained, typed abstraction over raw HTTP requests. They automate authentication headers, structured error parsing, exponential backoff retries, and Server-Sent Events (SSE) streaming deserialization.",
+        whyNot: "A, B, and C are completely false: API token pricing, model availability, and rate-limit quotas are strictly enforced at the platform API gateway regardless of the client library used."
+      },
+      {
+        id: "Q8 (5.8)",
+        domain: "Domain 5: Model Selection and Optimization",
+        type: "multiple",
+        text: "Which TWO statements about prompt caching are accurate? (Select TWO)",
+        options: [
+          { key: "A", text: "Caching makes model outputs fully deterministic for cached prompts, because the cached prefix locks in the generation path" },
+          { key: "B", text: "Reading a cached prefix is billed at a substantial discount compared with processing the same tokens uncached" },
+          { key: "C", text: "Cached content persists indefinitely once written" },
+          { key: "D", text: "Prompt caching discounts output tokens as well as input tokens, since both sides of the exchange benefit equally from the cache" },
+          { key: "E", text: "Writing a prefix to the cache costs a premium over the base input rate, which pays off when the prefix is reused" }
+        ],
+        correct: ["B", "E"],
+        explanation: "The core economics of Prompt Caching: Cache writes incur a slight cost premium (+25%) upon initial ingestion, while Cache reads enjoy a massive discount (90% lower per token). This yields large cost and TTFT savings whenever large static prefixes are reused across multiple requests.",
+        whyNot: "A is false because output generation remains autoregressive and non-deterministic. C is false because cache blocks have a 5-minute Time-To-Live (TTL). D is false because prompt caching discounts ONLY input prefix tokens; output tokens are always billed at standard rates."
+      },
+      {
+        id: "Q9 (5.9)",
+        domain: "Domain 5: Model Selection and Optimization",
+        type: "single",
+        text: "A team runs an interactive live-debugging assistant on Claude Opus. Users complain that responses stream too slowly during sessions. The team considers downgrading to a smaller model but is concerned about losing reasoning quality; latency matters more than cost for this workload. Which option best fits?",
+        options: [
+          { key: "A", text: "Move the workload to the Message Batches API to improve throughput" },
+          { key: "B", text: "Enable extended thinking so the model reasons more deeply before responding" },
+          { key: "C", text: "Enable fast mode by opting in with the speed: 'fast' parameter, which serves the same Opus model with faster output token generation at premium per-token pricing" },
+          { key: "D", text: "Downgrade to the smallest model tier, since all Claude models produce equivalent output for debugging tasks" }
+        ],
+        correct: ["C"],
+        explanation: "Fast mode provides up to 2.5x higher output token generation speed at premium pricing. Because it serves the exact same Claude Opus architecture, reasoning capability is fully preserved while dramatically cutting real-time streaming latency for interactive sessions where speed is paramount.",
+        whyNot: "A: The Message Batches API is an asynchronous queue for non-realtime batch jobs (up to 24h turn-around), the direct opposite of interactive debugging. B: Extended thinking adds reasoning tokens before answering, increasing time to first token. D: Smaller models have lower reasoning capabilities and will degrade debugging precision."
+      },
+      {
+        id: "Q10 (2.4)",
+        domain: "Domain 2: Latency & Presentation Optimization",
+        type: "single",
+        text: "Users of a chat application complain that long answers appear to 'hang' for many seconds before anything is displayed. Total answer quality and length are appropriate. Which change most directly addresses the complaint?",
+        options: [
+          { key: "A", text: "Reduce max_tokens so answers finish sooner" },
+          { key: "B", text: "Switch to a smaller, faster model regardless of quality impact" },
+          { key: "C", text: "Enable streaming so tokens render progressively as they are generated" },
+          { key: "D", text: "Move the requests to the Message Batches API" }
+        ],
+        correct: ["C"],
+        explanation: "Streaming attacks perceived latency: users see the first tokens almost immediately and read while the rest generates. Total generation time is unchanged, but the perceived hang completely disappears.",
+        whyNot: "A truncates answers users are happy with. B sacrifices quality when the issue is presentation. D increases latency dramatically (batch is for asynchronous jobs)."
+      },
+      {
+        id: "Q11 (2.5)",
+        domain: "Domain 2: Cost Optimization & Bulk Workloads",
+        type: "single",
+        text: "A team must classify two million archived support tickets for a data-warehouse backfill. Results are needed within a day or two, no user is waiting on any individual result, and cost is the dominant concern. Which approach best fits?",
+        options: [
+          { key: "A", text: "Synchronous Messages API calls run in parallel across as many workers as possible, so the whole job finishes as fast as it can" },
+          { key: "B", text: "The Message Batches API, which processes large asynchronous workloads within a 24-hour window at a discount" },
+          { key: "C", text: "Synchronous calls with a lower temperature to reduce cost" },
+          { key: "D", text: "Synchronous calls with streaming enabled to reduce cost" }
+        ],
+        correct: ["B"],
+        explanation: "This is the canonical batch workload: huge volume (2M), latency-tolerant, cost-sensitive. The Batches API trades immediacy for a 50% per-token discount and completion within a 24-hour window.",
+        whyNot: "A pays full price for speed nobody needs. C and D are false economies: temperature and streaming affect sampling and delivery, not per-token pricing."
+      },
+      {
+        id: "Q12 (2.7)",
+        domain: "Domain 2: Prompt Caching Architecture",
+        type: "single",
+        text: "A team enabled prompt caching on an application whose requests share a 40,000-token knowledge base. They placed the per-user dynamic data at the start of the prompt and the knowledge base after it. Cache hit rates are near zero. Why?",
+        options: [
+          { key: "A", text: "Prompt caching only works for prompts under 10,000 tokens, and the 40,000-token knowledge base is too large to be cached" },
+          { key: "B", text: "Caching requires temperature to be set to zero" },
+          { key: "C", text: "The knowledge base changes too often to be cached" },
+          { key: "D", text: "Caching matches on a stable prompt prefix; dynamic content first changes the prefix every request, so nothing downstream hits the cache" }
+        ],
+        correct: ["D"],
+        explanation: "Prompt caching keys on an exact, byte-identical prefix. Structure prompts with stable content first (system instructions, tools, static knowledge base, cache breakpoint) and per-request dynamic user inputs last.",
+        whyNot: "A is backwards: caching is specifically designed for large prompts (up to full context). B is unrelated to cache matching. C contradicts the scenario."
+      },
+      {
+        id: "Q13 (2.9)",
+        domain: "Domain 2: Resiliency & Rate Limiting",
+        type: "single",
+        text: "A production integration intermittently receives HTTP 429 (rate limit) and 529 (overloaded) responses during traffic spikes. Requests currently retry instantly in a tight loop, making the problem worse. What is the correct client behaviour?",
+        options: [
+          { key: "A", text: "Treat 429 and 529 responses as fatal application errors and permanently drop the affected requests without retrying them" },
+          { key: "B", text: "Switch models whenever a 429 is received" },
+          { key: "C", text: "Retry with exponential backoff and jitter, honouring any Retry-After header, and cap total attempts" },
+          { key: "D", text: "Increase temperature so requests complete faster" }
+        ],
+        correct: ["C"],
+        explanation: "Transient capacity errors call for disciplined retries: back off exponentially, add random jitter so clients do not retry in lockstep (thundering herd), respect the server's Retry-After header, and bound maximum attempts.",
+        whyNot: "A discards recoverable work. B does not resolve account-level rate limits and adds architectural complexity. D is meaningless: temperature affects sampling, not capacity."
+      },
+      {
+        id: "Q14 (2.10)",
+        domain: "Domain 2: Throughput & Async Optimization",
+        type: "single",
+        text: "A Python service summarises 300 independent documents per run by calling the Messages API in a serial for-loop. Each call takes about 20 seconds, so a run takes over 90 minutes. Results are needed within minutes. What is the right engineering fix?",
+        options: [
+          { key: "A", text: "Issue the requests concurrently using async I/O with a bounded concurrency limit that respects the account’s rate limits" },
+          { key: "B", text: "Concatenate all 300 documents into one single large request, so the per-call overhead is eliminated" },
+          { key: "C", text: "Change the task to extract only the first sentence of each document so each call finishes in under a second" },
+          { key: "D", text: "Move the 300 calls to the Message Batches API" }
+        ],
+        correct: ["A"],
+        explanation: "The documents are independent, so the work parallelizes cleanly. Asynchronous concurrency with an asyncio.Semaphore turns 300 sequential calls into overlapping requests while staying safely inside tier rate limits—finishing in minutes instead of 90 minutes.",
+        whyNot: "B risks exceeding the context window and entangles unrelated outputs. C degrades product quality to bypass a simple engineering fix. D has a 24-hour completion SLA when results are needed in minutes."
+      },
+      {
+        id: "Q15 (2.16)",
+        domain: "Domain 2: Production Release Governance",
+        type: "single",
+        text: "A production application targets a model alias that always points to the newest release. Overnight, output formatting changes and downstream parsing breaks. Which configuration practice prevents this class of incident?",
+        options: [
+          { key: "A", text: "Add a try/except around the parser and discard responses that fail" },
+          { key: "B", text: "Instruct the model in the prompt never to change its behaviour" },
+          { key: "C", text: "Only run the application during business hours, when new model releases are less likely to be rolled out" },
+          { key: "D", text: "Pin production to a specific dated model snapshot and migrate deliberately, after running the eval suite against new releases" }
+        ],
+        correct: ["D"],
+        explanation: "Model version pinning makes upgrades a controlled engineering decision rather than an ambient surprise. Production stays on a known dated snapshot (e.g. claude-3-5-sonnet-20241022) until the new model is validated on the team's automated eval suite.",
+        whyNot: "A silently drops production work. B cannot govern future model weights. C is wishful thinking: cloud APIs roll out globally across all time zones."
+      },
+      {
+        id: "Q16 (4.1)",
+        domain: "Domain 4: Eval, Testing, and Debugging",
+        type: "single",
+        text: "A RAG-backed assistant is giving users wrong answers. The team cannot tell whether the retrieval layer is returning irrelevant documents or the model is misreading good ones. What should they do first?",
+        options: [
+          { key: "A", text: "Analyse traces of the failing requests — the retrieved documents, the assembled prompt, and the model output — to isolate where the failure originates" },
+          { key: "B", text: "Rewrite the system prompt with stronger, more emphatic instructions telling the model to be accurate and to rely only on the retrieved documents" },
+          { key: "C", text: "Upgrade to the largest available model, whose stronger reasoning will compensate for the failure regardless of which layer is actually causing the wrong answers" },
+          { key: "D", text: "Add a disclaimer to the UI while the team decides what to change" }
+        ],
+        correct: ["A"],
+        explanation: "Systematic debugging requires isolating variables. Inspecting request traces reveals whether the retriever retrieved bad context (retrieval failure) or the model hallucinated despite good context (generation failure) before taking corrective action.",
+        whyNot: "B is guessing without diagnosis. C incurs unnecessary cost and cannot fix poor retrieval (garbage in, garbage out). D fails to diagnose the problem."
+      },
+      {
+        id: "Q17 (6.1)",
+        domain: "Domain 6: Prompt & Context Engineering",
+        type: "single",
+        text: "A customer-service assistant must always respond in formal English, never discuss competitors, and always sign off with a case reference. These rules were placed in the first user message, and after long conversations the model begins to drift from them. Where should the rules live?",
+        options: [
+          { key: "A", text: "In every user message, appended automatically by the client so the rules are restated on each turn" },
+          { key: "B", text: "In the system prompt, the designated place for persistent role, tone, and behavioural rules" },
+          { key: "C", text: "In the final assistant message of each exchange" },
+          { key: "D", text: "In an external document that the model is told exists" }
+        ],
+        correct: ["B"],
+        explanation: "System prompts are the architected location for persistent behavioral constraints, tone, and guardrails that must endure across multi-turn interactions without drifting or bloating individual user message turns.",
+        whyNot: "A causes massive context bloat and token waste. C puts instructions where they have no forward generation effect. D gives the model an inaccessible reference."
+      },
+      {
+        id: "Q18 (6.2)",
+        domain: "Domain 6: Prompt & Context Engineering",
+        type: "single",
+        text: "A long-running agent accumulates every raw tool result — full API payloads, complete file contents — in its context. After thirty steps, responses slow down and reasoning quality visibly degrades. Which technique addresses this?",
+        options: [
+          { key: "A", text: "Prune and compact: strip or summarise verbose tool outputs after use, retaining decisions and key facts" },
+          { key: "B", text: "Raise max_tokens so the model can produce longer answers despite the noise" },
+          { key: "C", text: "Switch to a model with a much larger context window and continue accumulating raw tool outputs" },
+          { key: "D", text: "Lower the temperature to help the model focus" }
+        ],
+        correct: ["A"],
+        explanation: "This is textbook context bloat. The remedy is context hygiene: prune obsolete tool outputs and compact intermediate history into concise summaries, keeping the attention window focused on high-signal data.",
+        whyNot: "B addresses output generation ceiling, not input clutter. C postpones failure at higher cost—attention still degrades over raw payload noise. D does not remove a single distracting token."
+      },
+      {
+        id: "Q19 (6.3)",
+        domain: "Domain 6: Prompt & Context Engineering",
+        type: "single",
+        text: "An agent working on a focused implementation task must first research a large unfamiliar codebase. Loading the exploration into the main context would crowd out the task itself. Which pattern solves this?",
+        options: [
+          { key: "A", text: "Context isolation: delegate the research to a subagent with its own context window, returning only a condensed summary of findings" },
+          { key: "B", text: "Interleave research and implementation in one context, alternating between them" },
+          { key: "C", text: "Skip the research phase entirely and let the model rely on its general training knowledge" },
+          { key: "D", text: "Run the research in the main context, then ask the model to forget it" }
+        ],
+        correct: ["A"],
+        explanation: "Subagents provide context isolation: noisy, high-volume exploration runs inside a disposable context window, and only the distilled summary enters the primary agent's context, preserving tokens and attention focus.",
+        whyNot: "B exhausts the main window with exploration junk. C encourages hallucinations. D is impossible: LLMs cannot selectively forget tokens present in their context window."
+      },
+      {
+        id: "Q20 (6.5)",
+        domain: "Domain 6: Prompt & Context Engineering",
+        type: "single",
+        text: "An enterprise contract assistant processes 80-page legal agreements. The prompt currently places the user's specific question at the very top, followed by the full agreement text. Model answers are frequently superficial. What structural prompt change measurably improves performance?",
+        options: [
+          { key: "A", text: "Split the document into single pages and query each page individually" },
+          { key: "B", text: "Place the long reference document first, and place the specific instructions and question at the bottom after the document" },
+          { key: "C", text: "Remove the contract text and ask general legal questions" },
+          { key: "D", text: "Truncate the contract to the first 10 pages only" }
+        ],
+        correct: ["B"],
+        explanation: "In long-context architectures, structure matters: placing the reference document first and the question/instructions at the end ensures the model reads the user query with the full context already active in its attention mechanism, significantly improving retrieval and reasoning quality.",
+        whyNot: "A destroys cross-clause legal relationships. C removes the ground truth. D arbitrarily discards material."
+      }
+    ];
+
+    // APPLICATION STATE
+    let currentQIdx = 0;
+    let userAnswers = {};
+    let instantFeedback = true;
+    let examTimeRemaining = 2100; // 35 minutes for 20 questions
+    let timerInterval = null;
+
+    window.onload = function () {
+      renderNavStrip();
+      loadQuestion(0);
+      startTimer();
+    };
+
+    function startTimer() {
+      if (timerInterval) clearInterval(timerInterval);
+      timerInterval = setInterval(() => {
+        if (examTimeRemaining <= 0) {
+          clearInterval(timerInterval);
+          alert("Time is up! Submitting exam automatically.");
+          submitExam();
+          return;
+        }
+        examTimeRemaining--;
+        const mins = Math.floor(examTimeRemaining / 60);
+        const secs = examTimeRemaining % 60;
+        document.getElementById("examTimer").innerText =
+          `${String(mins).padStart(2, '0')}:${String(secs).padStart(2, '0')}`;
+      }, 1000);
+    }
+
+    function renderNavStrip() {
+      const strip = document.getElementById("navStrip");
+      strip.innerHTML = "";
+      examQuestions.forEach((q, idx) => {
+        const btn = document.createElement("div");
+        btn.className = `q-pill ${idx === currentQIdx ? 'active' : ''}`;
+        btn.id = `pill-${idx}`;
+        btn.innerText = (idx + 1);
+        btn.title = q.id;
+        btn.onclick = () => loadQuestion(idx);
+        strip.appendChild(btn);
+      });
+    }
+
+    function loadQuestion(idx) {
+      currentQIdx = idx;
+      const q = examQuestions[idx];
+
+      document.getElementById("progressText").innerText = `Question ${idx + 1} of ${examQuestions.length}`;
+      document.getElementById("progressBar").style.width = `${((idx + 1) / examQuestions.length) * 100}%`;
+      document.getElementById("domainTag").innerText = q.domain;
+      document.getElementById("selectRule").innerText = q.type === "multiple" ? "Multiple Response · select TWO" : "Single Choice · select ONE";
+      document.getElementById("selectRule").style.color = q.type === "multiple" ? "#c084fc" : "#38bdf8";
+
+      document.getElementById("questionText").innerText = `${q.id}: ${q.text}`;
+
+      const optContainer = document.getElementById("optionsContainer");
+      optContainer.innerHTML = "";
+      const currentAnswers = userAnswers[idx] || [];
+
+      q.options.forEach(opt => {
+        const optDiv = document.createElement("div");
+        optDiv.className = `option-item ${currentAnswers.includes(opt.key) ? 'selected' : ''}`;
+
+        if (instantFeedback && currentAnswers.length > 0) {
+          if (q.correct.includes(opt.key)) {
+            optDiv.classList.add("correct-revealed");
+          } else if (currentAnswers.includes(opt.key)) {
+            optDiv.classList.add("wrong-revealed");
+          }
+        }
+
+        optDiv.onclick = () => selectOption(opt.key);
+
+        optDiv.innerHTML = `
+          <div class="opt-letter">${opt.key}</div>
+          <div class="opt-text">${opt.text}</div>
+        `;
+        optContainer.appendChild(optDiv);
+      });
+
+      const expBox = document.getElementById("explanationBox");
+      document.getElementById("expCorrectText").innerHTML = `<strong>Correct Answer: ${q.correct.join(", ")}</strong><br>${q.explanation}`;
+      document.getElementById("expWhyNotText").innerHTML = `<strong>Why Not The Distractors:</strong> ${q.whyNot}`;
+
+      if (instantFeedback && currentAnswers.length > 0) {
+        expBox.classList.add("active");
+      } else {
+        expBox.classList.remove("active");
+      }
+
+      document.querySelectorAll(".q-pill").forEach((p, pIdx) => {
+        p.classList.toggle("active", pIdx === idx);
+        const ans = userAnswers[pIdx] || [];
+        if (ans.length > 0) {
+          p.classList.add("answered");
+          if (instantFeedback) {
+            const isCorrect = isQuestionCorrect(pIdx);
+            p.classList.toggle("correct-mark", isCorrect);
+            p.classList.toggle("wrong-mark", !isCorrect);
+          }
+        }
+      });
+
+      document.getElementById("prevBtn").disabled = (idx === 0);
+      if (idx === examQuestions.length - 1) {
+        document.getElementById("nextBtn").style.display = "none";
+        document.getElementById("submitBtn").style.display = "inline-flex";
+      } else {
+        document.getElementById("nextBtn").style.display = "inline-flex";
+        document.getElementById("submitBtn").style.display = "none";
+      }
+    }
+
+    function selectOption(key) {
+      const q = examQuestions[currentQIdx];
+      let ans = userAnswers[currentQIdx] ? [...userAnswers[currentQIdx]] : [];
+
+      if (q.type === "single") {
+        ans = [key];
+      } else {
+        if (ans.includes(key)) {
+          ans = ans.filter(k => k !== key);
+        } else {
+          ans.push(key);
+        }
+      }
+
+      userAnswers[currentQIdx] = ans;
+      loadQuestion(currentQIdx);
+    }
+
+    function isQuestionCorrect(idx) {
+      const q = examQuestions[idx];
+      const ans = userAnswers[idx] || [];
+      if (ans.length !== q.correct.length) return false;
+      return q.correct.every(k => ans.includes(k));
+    }
+
+    function prevQuestion() {
+      if (currentQIdx > 0) loadQuestion(currentQIdx - 1);
+    }
+
+    function nextQuestion() {
+      if (currentQIdx < examQuestions.length - 1) loadQuestion(currentQIdx + 1);
+    }
+
+    function toggleCurrentExplanation() {
+      document.getElementById("explanationBox").classList.toggle("active");
+    }
+
+    function toggleInstantFeedback() {
+      instantFeedback = !instantFeedback;
+      document.getElementById("modeText").innerText = instantFeedback ?
+        "Live Study (Instant Explanations)" : "Strict Mock Exam (Test First)";
+      document.getElementById("modeText").style.color = instantFeedback ? "#38bdf8" : "#f59e0b";
+      loadQuestion(currentQIdx);
+    }
+
+    function jumpToExamQuestion(qIdx) {
+      loadQuestion(qIdx);
+      document.getElementById("questionContainer").scrollIntoView({ behavior: 'smooth' });
+    }
+
+    function submitExam() {
+      let correctCount = 0;
+      examQuestions.forEach((q, idx) => {
+        if (isQuestionCorrect(idx)) correctCount++;
+      });
+
+      const total = examQuestions.length;
+      const scorePct = Math.round((correctCount / total) * 100);
+      const isPassed = scorePct >= 70;
+
+      document.getElementById("questionContainer").style.display = "none";
+      document.getElementById("examFooter").style.display = "none";
+      const resultsView = document.getElementById("resultsView");
+      resultsView.classList.add("active");
+
+      document.getElementById("scorePercent").innerText = `${scorePct}%`;
+      const circle = document.getElementById("scoreCircle");
+      circle.className = `score-circle ${isPassed ? 'pass' : 'fail'}`;
+
+      const verdict = document.getElementById("resultVerdict");
+      verdict.innerText = isPassed ? "PASSED — Official CCDF Benchmark Met!" : "FAILED — Review Distractors & Reattempt";
+      verdict.className = `result-verdict ${isPassed ? 'pass-text' : 'fail-text'}`;
+
+      document.getElementById("statCorrect").innerText = correctCount;
+      document.getElementById("statWrong").innerText = (total - correctCount);
+      document.getElementById("resultMessage").innerText = isPassed ?
+        `Superb performance! You scored ${scorePct}% (${correctCount}/${total}), comfortably exceeding the 70% threshold. You are thoroughly prepared for questions on Context Budgeting, Prompt Caching, Fast Mode, Haiku/Sonnet/Opus routing, and Batch Processing.` :
+        `You scored ${scorePct}% (${correctCount}/${total}). The live exam requires 70%+ (at least 14 correct). Click "Review All 20 Answers" below to inspect why distractors failed.`;
+
+      document.querySelectorAll(".q-pill").forEach((p, idx) => {
+        const pass = isQuestionCorrect(idx);
+        p.className = `q-pill ${pass ? 'correct-mark' : 'wrong-mark'}`;
+      });
+    }
+
+    function reviewExamQuestions() {
+      instantFeedback = true;
+      document.getElementById("resultsView").classList.remove("active");
+      document.getElementById("questionContainer").style.display = "block";
+      document.getElementById("examFooter").style.display = "flex";
+      loadQuestion(0);
+    }
+
+    function restartExam() {
+      userAnswers = {};
+      examTimeRemaining = 2100;
+      document.getElementById("resultsView").classList.remove("active");
+      document.getElementById("questionContainer").style.display = "block";
+      document.getElementById("examFooter").style.display = "flex";
+      loadQuestion(0);
+      startTimer();
+    }
+
+    function changeVideoSource() {
+      const select = document.getElementById("videoSelect");
+      const video = document.getElementById("mainVideo");
+      video.src = select.value;
+      video.play().catch(e => console.log("User interaction required for autoplay"));
+    }
+
+    function toggleInfographic() {
+      document.getElementById("infoModal").classList.toggle("active");
+    }
+
+    function closeModalOnBackdrop(e) {
+      if (e.target.id === "infoModal") toggleInfographic();
+    }
+  </script>
+</body>
+
+</html>
