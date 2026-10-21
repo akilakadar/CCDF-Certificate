@@ -4,7 +4,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>CCDF Exam — Model Selection & Optimization: Video & 20-Question Mock Exam</title>
+  <title>CCDV-F Exam — Model Selection & Optimization: 60 Practice Questions & Video Masterclass</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link
@@ -827,7 +827,7 @@
       <div class="brand-section">
         <span class="badge-ccdf">CCDF CERTIFICATION</span>
         <div>
-          <div class="brand-title">Model Selection & Optimization — 20 Authentic CCDF Practice Questions</div>
+          <div class="brand-title">Model Selection & Optimization — 60 Official Practice Questions</div>
 
         </div>
       </div>
@@ -989,40 +989,45 @@
           <svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
           </svg>
-          DYNAMIC CCDF BENCHMARK EXAM · 60-QUESTION POOL
+          CCDV-F MODULE: MODEL SELECTION & OPTIMIZATION (MSO)
         </div>
-        <h2 class="start-title" id="startTitle">CCDF Practice Mock Exam</h2>
+        <h2 class="start-title" id="startTitle">CCDV-F Practice Exam (60 Questions)</h2>
         <p class="start-desc" id="startDesc">
-          Master the official competencies: Model Selection, Prompt Caching, Batch API, Agent vs Workflow Architectures, Tool Use & MCP, and Evals.
-          <br><strong style="color:var(--primary);">&#x2728; Every attempt dynamically serves 20 fresh questions with randomized answer choices — zero repeated questions on retake!</strong>
+          Complete official question bank directly from <strong>CCDV-F_MSO_Module_Practice_Questions.pdf</strong>.
+          <br>Part A (Q1–Q9): Blueprint Core · Part B (Q10–Q60): Advanced Practice Scenarios with Distractor Rationales.
         </p>
 
         <div class="exam-rules-grid">
           <div class="rule-card">
-            <h5>Exam Length</h5>
-            <p>20 Questions</p>
+            <h5>Total Questions</h5>
+            <p>60 Questions (from PDF)</p>
           </div>
           <div class="rule-card">
-            <h5>Retake Pool</h5>
-            <p>60 Questions (No Repeats)</p>
+            <h5>Syllabus Structure</h5>
+            <p>Q1–Q9 Core · Q10–Q60 Scenarios</p>
           </div>
           <div class="rule-card">
-            <h5>Time Limit</h5>
-            <p>35 Minutes</p>
+            <h5>Passing Standard</h5>
+            <p>70% (42 / 60)</p>
           </div>
           <div class="rule-card">
-            <h5>Passing Score</h5>
-            <p>70% (14 / 20)</p>
+            <h5>Study Mode</h5>
+            <p>Instant Rationale & Review</p>
           </div>
         </div>
 
-        <button class="btn-start-large" id="startExamBtn" onclick="beginExam()">
-          <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"></path>
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-          </svg>
-          Start Mock Exam (Attempt #1)
-        </button>
+        <div style="display: flex; gap: 14px; justify-content: center; flex-wrap: wrap; margin-top: 10px;">
+          <button class="btn-start-large" id="startFull60Btn" onclick="beginExam('full')">
+            <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"></path>
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+            </svg>
+            Start Full 60-Question Exam (In Order Q1–Q60)
+          </button>
+          <button class="btn btn-secondary" onclick="beginExam('random20')" style="padding: 14px 22px; font-size: 15px; border-radius: 12px; font-weight: 600;">
+            🎲 20-Question Quick Retake (Randomized / No Repeats)
+          </button>
+        </div>
       </div>
 
       <div class="exam-header" id="examHeader" style="display:none;">
@@ -1115,8 +1120,9 @@
         </div>
 
         <div style="display:flex; justify-content:center; gap:12px; margin-top:20px; flex-wrap:wrap;">
-          <button class="btn btn-secondary" onclick="reviewExamQuestions()">Review All 20 Answers</button>
-          <button class="btn btn-primary" onclick="restartExam()">&#x21bb; Retake Full Exam (20 Brand-New Questions)</button>
+          <button class="btn btn-secondary" onclick="reviewExamQuestions()">Review All Answers & Explanations</button>
+          <button class="btn btn-primary" onclick="restartExam('full')">↺ Retake Full 60 Questions (In Order)</button>
+          <button class="btn btn-secondary" onclick="restartExam('random20')">🎲 Retake 20 New Questions (No Repeats)</button>
         </div>
       </div>
 
@@ -1156,11 +1162,12 @@
 
   <script>
     // ==============================================================================
-    // MASTER QUESTION BANK: 60 AUTHENTIC CCDF EXAM QUESTIONS
-    // Covering: Model Selection, Latency, Cost, Context, Batches API, SDKs,
-    // Agent vs Workflow Architectures, Tool Use & MCP, and Evals & Testing.
+    // COMPLETE 60 QUESTIONS FROM CCDV-F_MSO_Module_Practice_Questions.pdf
+    // Part A: Domain 5 Core (Q1 to Q9)
+    // Part B: Advanced Practice Scenarios (Q10 to Q60)
+    // All answers, explanations, and distractor rationales directly from Pages 13-16.
     // ==============================================================================
-    const MASTER_QUESTION_BANK = [
+    const PDF_QUESTION_BANK = [
   {
     "id": "Q1 (source 5.1)",
     "q_num": 1,
@@ -2998,14 +3005,15 @@
   }
 ];
 
-    // APPLICATION STATE & RANDOMIZATION ENGINE
+    // APPLICATION STATE
+    let examMode = 'full'; // 'full' (all 60 in order) or 'random20' (20 randomized)
     let seenQuestionIds = new Set();
     let examAttemptCount = 0;
-    let examQuestions = []; // Active 20 questions for the current session
+    let examQuestions = []; // Active questions for the current session
     let currentQIdx = 0;
     let userAnswers = {};
     let instantFeedback = true;
-    let examTimeRemaining = 2100; // 35 minutes for 20 questions
+    let examTimeRemaining = 5400; // 90 mins for 60 questions, 35 mins for 20 questions
     let timerInterval = null;
     let examStarted = false;
 
@@ -3019,78 +3027,80 @@
       return result;
     }
 
-    // DYNAMIC EXAM GENERATOR:
-    // 1. Samples 20 questions that have NOT been seen in previous attempts
-    // 2. Shuffles the answer options (A, B, C, D) for each question
-    // 3. Remaps the correct answer keys and explanations accurately
-    function generateFreshExam() {
+    // INITIALIZE / SELECT EXAM QUESTIONS:
+    // Mode 'full': Exact 60 questions from PDF in order Q1 to Q60!
+    // Mode 'random20': Draws 20 unseen questions without repeating previous attempts!
+    function prepareExamQuestions(mode = 'full') {
+      examMode = mode;
       examAttemptCount++;
 
-      // Filter out previously seen questions to guarantee fresh questions on retake
-      let available = MASTER_QUESTION_BANK.filter(q => !seenQuestionIds.has(q.id));
+      if (mode === 'full') {
+        // Deep copy all 60 questions in exact sequential order Q1 to Q60
+        examQuestions = PDF_QUESTION_BANK.map((origQ, idx) => {
+          const q = JSON.parse(JSON.stringify(origQ));
+          q.displayNum = idx + 1;
+          return q;
+        });
+        examTimeRemaining = 5400; // 90 minutes
+      } else {
+        // 20-question randomized retake mode with zero repeats
+        let available = PDF_QUESTION_BANK.filter(q => !seenQuestionIds.has(q.id));
 
-      // If fewer than 20 questions remain unseen, reset history while excluding the immediate previous attempt
-      if (available.length < 20) {
-        const prevIds = new Set(examQuestions.map(q => q.originalId || q.id));
-        seenQuestionIds.clear();
-        prevIds.forEach(id => seenQuestionIds.add(id));
-        available = MASTER_QUESTION_BANK.filter(q => !seenQuestionIds.has(q.id));
+        // If fewer than 20 unseen remain, reset while excluding the immediate previous attempt
+        if (available.length < 20) {
+          const prevIds = new Set(examQuestions.map(q => q.id));
+          seenQuestionIds.clear();
+          prevIds.forEach(id => seenQuestionIds.add(id));
+          available = PDF_QUESTION_BANK.filter(q => !seenQuestionIds.has(q.id));
+        }
+
+        const shuffledCandidates = fisherYatesShuffle(available);
+        const chosen = shuffledCandidates.slice(0, 20);
+        chosen.forEach(q => seenQuestionIds.add(q.id));
+
+        const letters = ["A", "B", "C", "D", "E"];
+        examQuestions = chosen.map((origQ, idx) => {
+          const q = JSON.parse(JSON.stringify(origQ));
+          q.displayNum = idx + 1;
+
+          // Shuffle answer choices for randomized mode
+          const correctTexts = origQ.correct.map(key => {
+            const opt = origQ.options.find(o => o.key === key);
+            return opt ? opt.text : "";
+          });
+
+          const shuffledOpts = fisherYatesShuffle(origQ.options);
+          const remappedCorrect = [];
+
+          shuffledOpts.forEach((opt, optIdx) => {
+            opt.key = letters[optIdx];
+            if (correctTexts.includes(opt.text)) {
+              remappedCorrect.push(opt.key);
+            }
+          });
+
+          q.options = shuffledOpts;
+          q.correct = remappedCorrect;
+          return q;
+        });
+
+        examTimeRemaining = 2100; // 35 minutes
       }
-
-      // Shuffle available candidate pool and select 20
-      const shuffledCandidates = fisherYatesShuffle(available);
-      const chosenPool = shuffledCandidates.slice(0, 20);
-
-      // Record selected questions as seen
-      chosenPool.forEach(q => seenQuestionIds.add(q.id));
-
-      // Deep clone each question and randomize option positions
-      const letters = ["A", "B", "C", "D", "E"];
-      examQuestions = chosenPool.map((origQ, qIdx) => {
-        const qCopy = JSON.parse(JSON.stringify(origQ));
-        qCopy.originalId = origQ.id;
-        qCopy.displayNumber = qIdx + 1;
-
-        // Collect exact text of original correct options
-        const correctTexts = origQ.correct.map(key => {
-          const found = origQ.options.find(o => o.key === key);
-          return found ? found.text : "";
-        });
-
-        // Shuffle options
-        const shuffledOptions = fisherYatesShuffle(origQ.options);
-        const remappedCorrect = [];
-
-        shuffledOptions.forEach((opt, optIdx) => {
-          opt.key = letters[optIdx];
-          if (correctTexts.includes(opt.text)) {
-            remappedCorrect.push(opt.key);
-          }
-        });
-
-        qCopy.options = shuffledOptions;
-        qCopy.correct = remappedCorrect;
-        return qCopy;
-      });
 
       return examQuestions;
     }
 
     window.onload = function () {
-      // Pre-sample initial question set so navigator is ready
-      generateFreshExam();
+      // Pre-load full 60 questions so question pills 1-60 are available
+      prepareExamQuestions('full');
       renderNavStrip();
     };
 
-    function beginExam() {
+    function beginExam(mode = 'full') {
       examStarted = true;
       userAnswers = {};
-      examTimeRemaining = 2100;
 
-      // If starting fresh or re-starting, ensure fresh questions are generated
-      if (!examQuestions || examQuestions.length === 0) {
-        generateFreshExam();
-      }
+      prepareExamQuestions(mode);
 
       document.getElementById("startExamView").style.display = "none";
       document.getElementById("resultsView").classList.remove("active");
@@ -3139,7 +3149,8 @@
       currentQIdx = idx;
       const q = examQuestions[idx];
 
-      document.getElementById("progressText").innerText = `Question ${idx + 1} of ${examQuestions.length} · Attempt #${examAttemptCount}`;
+      const modeLabel = examMode === 'full' ? 'Full 60-Question Exam (Q1–Q60)' : `20-Question Retake · Attempt #${examAttemptCount}`;
+      document.getElementById("progressText").innerText = `Question ${idx + 1} of ${examQuestions.length} · ${modeLabel}`;
       document.getElementById("progressBar").style.width = `${((idx + 1) / examQuestions.length) * 100}%`;
       document.getElementById("domainTag").innerText = q.domain;
       document.getElementById("selectRule").innerText = q.type === "multiple" ? "Multiple Response · select TWO" : "Single Choice · select ONE";
@@ -3252,9 +3263,11 @@
 
     function jumpToExamQuestion(qIdx) {
       if (!examStarted) {
-        beginExam();
+        beginExam('full');
       }
-      loadQuestion(qIdx);
+      if (qIdx < examQuestions.length) {
+        loadQuestion(qIdx);
+      }
       document.getElementById("questionContainer").scrollIntoView({ behavior: 'smooth' });
     }
 
@@ -3278,14 +3291,14 @@
       circle.className = `score-circle ${isPassed ? 'pass' : 'fail'}`;
 
       const verdict = document.getElementById("resultVerdict");
-      verdict.innerText = isPassed ? "PASSED — Official CCDF Benchmark Met!" : "FAILED — Review Distractors & Reattempt";
+      verdict.innerText = isPassed ? "PASSED — Official CCDV-F MSO Benchmark Met!" : "FAILED — Review Distractors & Reattempt";
       verdict.className = `result-verdict ${isPassed ? 'pass-text' : 'fail-text'}`;
 
       document.getElementById("statCorrect").innerText = correctCount;
       document.getElementById("statWrong").innerText = (total - correctCount);
       document.getElementById("resultMessage").innerText = isPassed ?
-        `Superb performance! You scored ${scorePct}% (${correctCount}/${total}), comfortably exceeding the 70% threshold. You are thoroughly prepared for Model Selection, Prompt Caching, Batching, Agent Architectures, and Tool Use.` :
-        `You scored ${scorePct}% (${correctCount}/${total}). The live exam requires 70%+ (at least 14 correct). Click "Review All 20 Answers" below to inspect why distractors failed, or click "Retake Full Exam" to attempt 20 brand-new questions!`;
+        `Superb performance! You scored ${scorePct}% (${correctCount}/${total}), meeting the 70% threshold. You are fully prepared for Model Selection, Prompt Caching, Fast Mode, Fallback Architecture, and Cost/Latency Optimization.` :
+        `You scored ${scorePct}% (${correctCount}/${total}). The CCDV-F standard requires 70%+ (${Math.ceil(total * 0.7)} / ${total} correct). Review the detailed distractors below and reattempt.`;
 
       document.querySelectorAll(".q-pill").forEach((p, idx) => {
         const pass = isQuestionCorrect(idx);
@@ -3301,25 +3314,16 @@
       loadQuestion(0);
     }
 
-    // RETAKE EXAM:
-    // Generates 20 COMPLETELY NEW questions from the 60-question bank
-    // Shuffles answer choices (A, B, C, D)
-    // Starts Attempt #(examAttemptCount) fresh with full 35-min timer
-    function restartExam() {
+    function restartExam(mode = 'full') {
       if (timerInterval) clearInterval(timerInterval);
       document.getElementById("resultsView").classList.remove("active");
-      
-      // Draw fresh questions and re-shuffle answers
-      generateFreshExam();
-      beginExam();
-      
-      // Smoothly scroll to the top of the exam view
+      beginExam(mode);
       document.getElementById("examHeader").scrollIntoView({ behavior: 'smooth' });
     }
 
     function confirmRestart() {
-      if (confirm("Are you sure you want to retake the exam? A brand-new set of 20 questions with randomized options will be generated.")) {
-        restartExam();
+      if (confirm("Would you like to restart? Click OK to load the full 60 questions from CCDV-F_MSO_Module_Practice_Questions.pdf.")) {
+        restartExam('full');
       }
     }
 
