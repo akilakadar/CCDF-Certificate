@@ -579,6 +579,102 @@
       color: #fff;
     }
 
+    .start-exam-view {
+      padding: 36px 28px;
+      text-align: center;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 480px;
+    }
+
+    .start-badge {
+      background: linear-gradient(135deg, rgba(56, 189, 248, 0.2), rgba(99, 102, 241, 0.2));
+      border: 1px solid rgba(56, 189, 248, 0.4);
+      color: var(--primary);
+      padding: 6px 14px;
+      border-radius: 20px;
+      font-size: 13px;
+      font-weight: 700;
+      letter-spacing: 0.5px;
+      margin-bottom: 16px;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .start-title {
+      font-size: 26px;
+      font-weight: 800;
+      color: #f8fafc;
+      margin-bottom: 12px;
+      background: linear-gradient(90deg, #f8fafc, #38bdf8);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .start-desc {
+      color: var(--text-muted);
+      font-size: 14px;
+      max-width: 520px;
+      line-height: 1.6;
+      margin-bottom: 24px;
+    }
+
+    .exam-rules-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 12px;
+      width: 100%;
+      max-width: 540px;
+      margin-bottom: 28px;
+      text-align: left;
+    }
+
+    .rule-card {
+      background: rgba(30, 41, 59, 0.5);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 8px;
+      padding: 12px 14px;
+    }
+
+    .rule-card h5 {
+      font-size: 12px;
+      color: var(--primary);
+      margin-bottom: 4px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .rule-card p {
+      font-size: 13px;
+      color: #f1f5f9;
+      font-weight: 600;
+    }
+
+    .btn-start-large {
+      padding: 14px 36px;
+      font-size: 16px;
+      font-weight: 700;
+      border-radius: 12px;
+      background: linear-gradient(135deg, #38bdf8, #2563eb);
+      color: #ffffff;
+      border: none;
+      cursor: pointer;
+      box-shadow: 0 0 25px rgba(56, 189, 248, 0.4);
+      transition: all 0.25s ease;
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .btn-start-large:hover {
+      background: linear-gradient(135deg, #0ea5e9, #1d4ed8);
+      transform: translateY(-2px) scale(1.02);
+      box-shadow: 0 0 35px rgba(56, 189, 248, 0.6);
+    }
+
     .results-view {
       display: none;
       padding: 30px;
@@ -887,7 +983,49 @@
     <!-- RIGHT: 20-QUESTION MOCK EXAM -->
     <div class="glass-card">
 
-      <div class="exam-header">
+      <!-- EXAM WELCOME / START SCREEN -->
+      <div class="start-exam-view" id="startExamView">
+        <div class="start-badge">
+          <svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+          </svg>
+          OFFICIAL BENCHMARK EVALUATION
+        </div>
+        <h2 class="start-title">CCDF Practice Mock Exam</h2>
+        <p class="start-desc">
+          Test your knowledge with 20 authentic scenario questions from the official syllabus on
+          Model Selection, Token Budgeting, Prompt Caching, Batching, and Resilient Fallbacks.
+        </p>
+
+        <div class="exam-rules-grid">
+          <div class="rule-card">
+            <h5>Total Questions</h5>
+            <p>20 Questions</p>
+          </div>
+          <div class="rule-card">
+            <h5>Time Limit</h5>
+            <p>35 Minutes</p>
+          </div>
+          <div class="rule-card">
+            <h5>Passing Score</h5>
+            <p>70% (14 / 20)</p>
+          </div>
+          <div class="rule-card">
+            <h5>Study Mode</h5>
+            <p>Instant Rationale</p>
+          </div>
+        </div>
+
+        <button class="btn-start-large" id="startExamBtn" onclick="beginExam()">
+          <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"></path>
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+          </svg>
+          Start Mock Exam
+        </button>
+      </div>
+
+      <div class="exam-header" id="examHeader" style="display:none;">
         <div class="exam-progress-wrap">
           <div class="progress-bar-bg">
             <div class="progress-bar-fill" id="progressBar"></div>
@@ -905,12 +1043,12 @@
       </div>
 
       <!-- QUESTION QUICK NAVIGATOR (1 TO 20) -->
-      <div class="question-nav-strip" id="navStrip">
+      <div class="question-nav-strip" id="navStrip" style="display:none;">
         <!-- Rendered dynamically -->
       </div>
 
       <!-- QUESTION BODY -->
-      <div class="exam-body" id="questionContainer">
+      <div class="exam-body" id="questionContainer" style="display:none;">
 
         <div class="question-meta">
           <span class="domain-tag" id="domainTag">Domain 5: Model Selection & Optimization</span>
@@ -978,7 +1116,7 @@
       </div>
 
       <!-- FOOTER CONTROLS -->
-      <div class="exam-footer" id="examFooter">
+      <div class="exam-footer" id="examFooter" style="display:none;">
         <button class="btn btn-secondary" id="prevBtn" onclick="prevQuestion()" disabled>
           &larr; Previous
         </button>
@@ -1326,12 +1464,23 @@
     let instantFeedback = true;
     let examTimeRemaining = 2100; // 35 minutes for 20 questions
     let timerInterval = null;
+    let examStarted = false;
 
     window.onload = function () {
       renderNavStrip();
+    };
+
+    function beginExam() {
+      examStarted = true;
+      document.getElementById("startExamView").style.display = "none";
+      document.getElementById("examHeader").style.display = "flex";
+      document.getElementById("navStrip").style.display = "flex";
+      document.getElementById("questionContainer").style.display = "block";
+      document.getElementById("examFooter").style.display = "flex";
+
       loadQuestion(0);
       startTimer();
-    };
+    }
 
     function startTimer() {
       if (timerInterval) clearInterval(timerInterval);
@@ -1480,6 +1629,9 @@
     }
 
     function jumpToExamQuestion(qIdx) {
+      if (!examStarted) {
+        beginExam();
+      }
       loadQuestion(qIdx);
       document.getElementById("questionContainer").scrollIntoView({ behavior: 'smooth' });
     }
@@ -1531,10 +1683,14 @@
       userAnswers = {};
       examTimeRemaining = 2100;
       document.getElementById("resultsView").classList.remove("active");
-      document.getElementById("questionContainer").style.display = "block";
-      document.getElementById("examFooter").style.display = "flex";
-      loadQuestion(0);
-      startTimer();
+      document.getElementById("startExamView").style.display = "flex";
+      document.getElementById("examHeader").style.display = "none";
+      document.getElementById("navStrip").style.display = "none";
+      document.getElementById("questionContainer").style.display = "none";
+      document.getElementById("examFooter").style.display = "none";
+      examStarted = false;
+      if (timerInterval) clearInterval(timerInterval);
+      document.getElementById("examTimer").innerText = "35:00";
     }
 
     function changeVideoSource() {
