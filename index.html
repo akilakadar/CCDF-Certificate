@@ -1162,8 +1162,9 @@
     // ==============================================================================
     const MASTER_QUESTION_BANK = [
   {
-    "id": "Q1 (5.1)",
-    "domain": "Domain 5: Model Selection and Optimization",
+    "id": "Q1 (source 5.1)",
+    "q_num": 1,
+    "domain": "Domain 5: Model Selection & Optimization (MSO)",
     "type": "single",
     "text": "A compliance team requires that identical inputs to a Claude application always produce byte-identical outputs, and an engineer proposes setting temperature to 0 to guarantee it. What is the accurate understanding?",
     "options": [
@@ -1187,12 +1188,13 @@
     "correct": [
       "C"
     ],
-    "explanation": "LLM generation is not guaranteed deterministic even at temperature 0. Due to floating-point non-associativity across massively parallel GPU clusters and architectural variations, identical inputs can produce slight token differences. Applications must be designed to tolerate variation using strict output validation schemas and eval suites.",
-    "whyNot": "A is incorrect because sampling at temp 0 minimizes entropy but cannot eliminate hardware parallelization non-determinism. B is false because fixing max_tokens only limits response ceiling. D is false because streaming uses the exact same underlying autoregressive sampling mechanism."
+    "explanation": "Temperature 0 makes sampling greedy and outputs far more stable, but the platform does not guarantee bit-identical generation. Robust designs validate outputs against requirements instead of assuming exact repetition.",
+    "whyNot": "A overstates what temperature controls; B fixes output length, not token selection; D is false - streaming changes delivery, not generation."
   },
   {
-    "id": "Q2 (5.2)",
-    "domain": "Domain 5: Model Selection and Optimization",
+    "id": "Q2 (source 5.2)",
+    "q_num": 2,
+    "domain": "Domain 5: Model Selection & Optimization (MSO)",
     "type": "single",
     "text": "An application submits a 190,000-token document to a model with a 200,000-token context window and requests max_tokens of 20,000. The request is rejected. Why?",
     "options": [
@@ -1216,14 +1218,15 @@
     "correct": [
       "B"
     ],
-    "explanation": "The context window is a single unified budget covering both input tokens and the reserved max_tokens output allowance. 190,000 input tokens + 20,000 requested output tokens = 210,000 tokens, which exceeds the 200,000 limit. Large inputs require trimming, chunking, or a smaller max_tokens reservation.",
-    "whyNot": "A and C describe fictional rules that do not exist in the Anthropic API. D completely inverts how the context window works."
+    "explanation": "The context window is a single budget covering everything: input tokens and the reserved output allowance together must fit inside it. Large inputs require trimming, chunking, or a smaller output reservation.",
+    "whyNot": "A and C describe rules that do not exist; D inverts how the window works."
   },
   {
-    "id": "Q3 (5.3)",
-    "domain": "Domain 5: Model Selection and Optimization",
+    "id": "Q3 (source 5.3)",
+    "q_num": 3,
+    "domain": "Domain 5: Model Selection & Optimization (MSO)",
     "type": "single",
-    "text": "A model returns correct information but formats it differently on every call — sometimes bullet points, sometimes tables, sometimes prose — despite a written instruction describing the desired format. What is the most effective prompting fix?",
+    "text": "A model returns correct information but formats it differently on every call - sometimes bullet points, sometimes tables, sometimes prose - despite a written instruction describing the desired format. What is the most effective prompting fix?",
     "options": [
       {
         "key": "A",
@@ -1245,12 +1248,13 @@
     "correct": [
       "D"
     ],
-    "explanation": "When format matters, showing beats telling. Multi-shot examples demonstrate the target structure concretely, and the model patterns its generation after concrete demonstrations far more reliably than on abstract written prose.",
-    "whyNot": "A increases generation variance—the opposite of formatting consistency. B deletes the only directive in place. C provides marginal benefit at best, whereas demonstrations fundamentally guide formatting."
+    "explanation": "When format matters, showing beats telling. Multi-shot examples demonstrate the target format concretely, and the model patterns its output on them far more reliably than on a written description alone.",
+    "whyNot": "A increases variability - the opposite of the goal; B removes the only guidance that exists; C helps marginally but a description remains weaker than demonstrations."
   },
   {
-    "id": "Q4 (5.4)",
-    "domain": "Domain 5: Model Selection and Optimization",
+    "id": "Q4 (source 5.4)",
+    "q_num": 4,
+    "domain": "Domain 5: Model Selection & Optimization (MSO)",
     "type": "single",
     "text": "A developer is migrating an application from an older Claude model that used a manually configured extended thinking token budget. For the current model generation, they want Claude to decide for itself when and how deeply to reason, while retaining a lever to trade reasoning depth against token cost. Which configuration achieves this?",
     "options": [
@@ -1274,12 +1278,13 @@
     "correct": [
       "B"
     ],
-    "explanation": "In adaptive thinking mode, Claude evaluates request complexity dynamically and decides whether and how much to use extended reasoning. The 'effort' parameter acts as soft guidance on how much reasoning Claude applies. Lower effort levels reduce reasoning token consumption and cut cost, giving the precise depth-versus-cost control desired.",
-    "whyNot": "A: budget_tokens is deprecated on current models in favor of adaptive thinking with the effort parameter. C: fast mode adjusts output token generation speed at premium pricing, not internal reasoning depth. D: temperature controls sampling entropy and does not disable thinking."
+    "explanation": "In adaptive mode, thinking is optional for the model: Claude evaluates the complexity of each request and determines whether and how much to use extended thinking, while the effort parameter provides soft guidance on how much thinking Claude allocates. Lower effort levels use fewer tokens per turn and reduce cost.",
+    "whyNot": "A, budget_tokens is deprecated on current models in favour of adaptive thinking with the effort parameter; C, fast mode changes output token generation speed, not reasoning behaviour; D, temperature controls sampling randomness and has no relationship to whether thinking is enabled."
   },
   {
-    "id": "Q5 (5.5)",
-    "domain": "Domain 5: Model Selection and Optimization",
+    "id": "Q5 (source 5.5)",
+    "q_num": 5,
+    "domain": "Domain 5: Model Selection & Optimization (MSO)",
     "type": "single",
     "text": "A retailer needs to assign one of six category labels to five million short product descriptions per day. The task is simple, latency budgets are tight, and unit cost dominates the business case. Which model tier is the appropriate starting point?",
     "options": [
@@ -1293,7 +1298,7 @@
       },
       {
         "key": "C",
-        "text": "Haiku, the fast, low-cost tier suited to simple high-volume tasks — validated with an eval first"
+        "text": "Haiku, the fast, low-cost tier suited to simple high-volume tasks - validated with an eval first"
       },
       {
         "key": "D",
@@ -1303,22 +1308,23 @@
     "correct": [
       "C"
     ],
-    "explanation": "Simple classification, extreme daily volume (5,000,000 requests), tight latency, and hard unit-cost economics define the classic Claude Haiku workload profile. Best practice is to validate on a small benchmark eval set first, then deploy Haiku for massive cost savings.",
-    "whyNot": "A incurs massive cost overhead for capability headroom a 6-category classifier never utilizes. B defaults by assumption rather than profiling task fit. D is arbitrary gambling, not an engineering strategy."
+    "explanation": "Simple task, extreme volume, hard cost and latency constraints: that is the Haiku profile. The professional move is to confirm with an eval that the small model meets the accuracy bar.",
+    "whyNot": "A pays a large premium for capability headroom a six-label task does not use; B defaults instead of matching the model to the task; D is not a strategy."
   },
   {
-    "id": "Q6 (5.6)",
-    "domain": "Domain 5: Model Selection and Optimization",
+    "id": "Q6 (source 5.6)",
+    "q_num": 6,
+    "domain": "Domain 5: Model Selection & Optimization (MSO)",
     "type": "single",
     "text": "A new Claude model release offers better benchmark scores at a lower price, and the team wants to migrate a production application to it. What must they account for before cutting over?",
     "options": [
       {
         "key": "A",
-        "text": "Nothing — newer models are strict supersets, so behaviour can only improve"
+        "text": "Nothing - newer models are strict supersets, so behaviour can only improve"
       },
       {
         "key": "B",
-        "text": "Model releases can include breaking behaviour changes — formatting, instruction-following, tool use — so validate by running the application’s eval suite against the new model first"
+        "text": "Model releases can include breaking behaviour changes - formatting, instruction-following, tool use - so validate by running the application's eval suite against the new model first"
       },
       {
         "key": "C",
@@ -1332,12 +1338,13 @@
     "correct": [
       "B"
     ],
-    "explanation": "A model release is a behavioral change, not a simple bug fix. Prompts and tools optimized for one model version can trigger regressions, altered formatting, or tool-calling anomalies on another. The application's automated evaluation suite must be run first to compare benchmark metrics before production cutover.",
-    "whyNot": "A and C are false assumptions that cause real-world production outages. D invents an arbitrary constraint."
+    "explanation": "A model upgrade is a behaviour change, not a drop-in patch. Prompts tuned to one release can interact differently with the next, so the eval suite is the gate: measure, compare, then migrate deliberately.",
+    "whyNot": "A and C are false - aggregate improvement does not mean identical behaviour on your distribution; D invents a restriction that does not exist."
   },
   {
-    "id": "Q7 (5.7)",
-    "domain": "Domain 5: Model Selection and Optimization",
+    "id": "Q7 (source 5.7)",
+    "q_num": 7,
+    "domain": "Domain 5: Model Selection & Optimization (MSO)",
     "type": "single",
     "text": "A team is deciding between calling the REST API directly with hand-rolled HTTP code and using an official Anthropic client SDK. What does the SDK primarily provide?",
     "options": [
@@ -1361,14 +1368,15 @@
     "correct": [
       "D"
     ],
-    "explanation": "Official SDKs provide a well-maintained, typed abstraction over raw HTTP requests. They automate authentication headers, structured error parsing, exponential backoff retries, and Server-Sent Events (SSE) streaming deserialization.",
-    "whyNot": "A, B, and C are completely false: API token pricing, model availability, and rate-limit quotas are strictly enforced at the platform API gateway regardless of the client library used."
+    "explanation": "SDKs wrap the same REST API with the engineering conveniences that are tedious and error-prone to hand-roll: auth headers, typed request/response objects, structured errors, retry behaviour, and parsing of streaming events.",
+    "whyNot": "A, B, and C are all false - pricing, model availability, and rate limits are properties of the platform, identical whichever client you use."
   },
   {
-    "id": "Q8 (5.8)",
-    "domain": "Domain 5: Model Selection and Optimization",
+    "id": "Q8 (source 5.8)",
+    "q_num": 8,
+    "domain": "Domain 5: Model Selection & Optimization (MSO)",
     "type": "multiple",
-    "text": "Which TWO statements about prompt caching are accurate? (Select TWO)",
+    "text": "Which TWO statements about prompt caching are accurate?",
     "options": [
       {
         "key": "A",
@@ -1395,12 +1403,13 @@
       "B",
       "E"
     ],
-    "explanation": "The core economics of Prompt Caching: Cache writes incur a slight cost premium (+25%) upon initial ingestion, while Cache reads enjoy a massive discount (90% lower per token). This yields large cost and TTFT savings whenever large static prefixes are reused across multiple requests.",
-    "whyNot": "A is false because output generation remains autoregressive and non-deterministic. C is false because cache blocks have a 5-minute Time-To-Live (TTL). D is false because prompt caching discounts ONLY input prefix tokens; output tokens are always billed at standard rates."
+    "explanation": "The caching economics: cache writes cost slightly more than normal input processing, cache reads cost a fraction of it. The pattern wins whenever a large stable prefix is reused enough times to amortise the write.",
+    "whyNot": "A confuses cost mechanics with sampling - generation stays non-deterministic; C is false, cache entries expire after a time-to-live; D is false, output tokens are always billed at the normal rate."
   },
   {
-    "id": "Q9 (5.9)",
-    "domain": "Domain 5: Model Selection and Optimization",
+    "id": "Q9 (source 5.9)",
+    "q_num": 9,
+    "domain": "Domain 5: Model Selection & Optimization (MSO)",
     "type": "single",
     "text": "A team runs an interactive live-debugging assistant on Claude Opus. Users complain that responses stream too slowly during sessions. The team considers downgrading to a smaller model but is concerned about losing reasoning quality; latency matters more than cost for this workload. Which option best fits?",
     "options": [
@@ -1414,1502 +1423,1578 @@
       },
       {
         "key": "C",
-        "text": "Enable fast mode by opting in with the speed: 'fast' parameter, which serves the same Opus model with faster output token generation at premium per-token pricing"
+        "text": "Enable fast mode by opting in with the speed: \"fast\" parameter, which serves the same Opus model with faster output token generation at premium per-token pricing"
       },
       {
         "key": "D",
-        "text": "Downgrade to the smallest model tier, since all Claude models produce equivalent output for debugging tasks"
+        "text": "Downgrade to the smallest model tier, since all Claude models produce equivalent output for debugging tasks Part B: Additional MSO practice questions"
       }
     ],
     "correct": [
       "C"
     ],
-    "explanation": "Fast mode provides up to 2.5x higher output token generation speed at premium pricing. Because it serves the exact same Claude Opus architecture, reasoning capability is fully preserved while dramatically cutting real-time streaming latency for interactive sessions where speed is paramount.",
-    "whyNot": "A: The Message Batches API is an asynchronous queue for non-realtime batch jobs (up to 24h turn-around), the direct opposite of interactive debugging. B: Extended thinking adds reasoning tokens before answering, increasing time to first token. D: Smaller models have lower reasoning capabilities and will degrade debugging precision."
+    "explanation": "Fast mode opts in with speed: \"fast\" and is not a different model, so reasoning quality is preserved while interactive latency improves, matching a workload where speed outweighs cost.",
+    "whyNot": "A, the Batch API targets latency-tolerant workloads (and fast mode is not available with it); B, extended thinking adds reasoning tokens before the answer, increasing time-to-answer; D, model tiers trade capability for speed and cost, and the scenario rules out sacrificing reasoning quality. [Note: the source PDF's key line for 5.9 prints 'A, D', but its own rationale and the 'select ONE' format make C the correct answer.]"
   },
   {
-    "id": "Q10 (2.4)",
-    "domain": "Domain 2: Latency & Presentation Optimization",
+    "id": "Q10 (MSO.10)",
+    "q_num": 10,
+    "domain": "Domain 5: Model Selection & Optimization (MSO)",
     "type": "single",
-    "text": "Users of a chat application complain that long answers appear to 'hang' for many seconds before anything is displayed. Total answer quality and length are appropriate. Which change most directly addresses the complaint?",
+    "text": "A document-processing product handles two request types: short, formulaic status look-ups (about 90% of traffic) and occasional multi-document legal comparisons that need deep reasoning. The team currently sends everything to its most capable tier and wants to cut cost without degrading the hard cases. What is the best design?",
     "options": [
       {
         "key": "A",
-        "text": "Reduce max_tokens so answers finish sooner"
+        "text": "Route by task type: send look-ups to a smaller tier and legal comparisons to the stronger tier, validating each route against its own eval slice"
       },
       {
         "key": "B",
-        "text": "Switch to a smaller, faster model regardless of quality impact"
+        "text": "Move all traffic to the smaller tier and accept lower quality on the comparisons"
       },
       {
         "key": "C",
-        "text": "Enable streaming so tokens render progressively as they are generated"
+        "text": "Keep everything on the strongest tier and lower max_tokens to reduce spend"
       },
       {
         "key": "D",
-        "text": "Move the requests to the Message Batches API"
+        "text": "Alternate requests between tiers so quality and cost average out"
       }
     ],
     "correct": [
-      "C"
+      "A"
     ],
-    "explanation": "Streaming attacks perceived latency: users see the first tokens almost immediately and read while the rest generates. Total generation time is unchanged, but the perceived hang completely disappears.",
-    "whyNot": "A truncates answers users are happy with. B sacrifices quality when the issue is presentation. D increases latency dramatically (batch is for asynchronous jobs)."
+    "explanation": "Routing places capability where it earns its cost.",
+    "whyNot": "A sacrifices the hard cases; B truncates answers without fixing the real driver of cost; D guarantees mismatches."
   },
   {
-    "id": "Q11 (2.5)",
-    "domain": "Domain 2: Cost Optimization & Bulk Workloads",
+    "id": "Q11 (MSO.11)",
+    "q_num": 11,
+    "domain": "Domain 5: Model Selection & Optimization (MSO)",
     "type": "single",
-    "text": "A team must classify two million archived support tickets for a data-warehouse backfill. Results are needed within a day or two, no user is waiting on any individual result, and cost is the dominant concern. Which approach best fits?",
+    "text": "The provider announces that the model snapshot your production application is pinned to will be retired in 90 days. What is the most responsible plan?",
     "options": [
       {
         "key": "A",
-        "text": "Synchronous Messages API calls run in parallel across as many workers as possible, so the whole job finishes as fast as it can"
+        "text": "Switch the pin to the newest alias now and watch support tickets for problems"
       },
       {
         "key": "B",
-        "text": "The Message Batches API, which processes large asynchronous workloads within a 24-hour window at a discount"
+        "text": "Choose a successor, run the eval suite against it, fix prompt or parsing regressions, then roll out gradually before the retirement date"
       },
       {
         "key": "C",
-        "text": "Synchronous calls with a lower temperature to reduce cost"
+        "text": "Wait for the retirement date, since the platform will transparently map requests to a successor with identical behaviour"
       },
       {
         "key": "D",
-        "text": "Synchronous calls with streaming enabled to reduce cost"
+        "text": "Freeze all development until the new model has been in the market for a year"
       }
     ],
     "correct": [
       "B"
     ],
-    "explanation": "This is the canonical batch workload: huge volume (2M), latency-tolerant, cost-sensitive. The Batches API trades immediacy for a 50% per-token discount and completion within a 24-hour window.",
-    "whyNot": "A pays full price for speed nobody needs. C and D are false economies: temperature and streaming affect sampling and delivery, not per-token pricing."
+    "explanation": "Retirement is a planned migration: measure, fix, stage the rollout.",
+    "whyNot": "A is untested and unpinned; B assumes identical behaviour that nobody guarantees; D ignores the deadline."
   },
   {
-    "id": "Q12 (2.7)",
-    "domain": "Domain 2: Prompt Caching Architecture",
+    "id": "Q12 (MSO.12)",
+    "q_num": 12,
+    "domain": "Domain 5: Model Selection & Optimization (MSO)",
     "type": "single",
-    "text": "A team enabled prompt caching on an application whose requests share a 40,000-token knowledge base. They placed the per-user dynamic data at the start of the prompt and the knowledge base after it. Cache hit rates are near zero. Why?",
+    "text": "Before launching a job of one million summarisation requests, a team wants a reliable cost estimate. Which approach is most accurate?",
     "options": [
       {
         "key": "A",
-        "text": "Prompt caching only works for prompts under 10,000 tokens, and the 40,000-token knowledge base is too large to be cached"
+        "text": "Count input tokens on a representative sample with token counting, measure typical output length in a pilot run, and multiply by current per-token prices"
       },
       {
         "key": "B",
-        "text": "Caching requires temperature to be set to zero"
+        "text": "Take the cost of one request and multiply by one million, regardless of document length"
       },
       {
         "key": "C",
-        "text": "The knowledge base changes too often to be cached"
+        "text": "Run the full million requests and read the invoice afterwards, adjusting if needed"
       },
       {
         "key": "D",
-        "text": "Caching matches on a stable prompt prefix; dynamic content first changes the prefix every request, so nothing downstream hits the cache"
+        "text": "Estimate tokens as characters divided by two for every document and multiply by the input price only"
+      }
+    ],
+    "correct": [
+      "A"
+    ],
+    "explanation": "Real token counts and real output lengths, priced separately for input and output, give a defensible estimate.",
+    "whyNot": "A ignores output cost and uses a crude ratio; B is the expensive way to learn; D ignores variance in length."
+  },
+  {
+    "id": "Q13 (MSO.13)",
+    "q_num": 13,
+    "domain": "Domain 5: Model Selection & Optimization (MSO)",
+    "type": "single",
+    "text": "A team wants to track actual token consumption, including cache reads and writes, for each production request. Where should they read it from?",
+    "options": [
+      {
+        "key": "A",
+        "text": "Only the monthly invoice, since per-request token counts are not exposed"
+      },
+      {
+        "key": "B",
+        "text": "The temperature setting stored with each request"
+      },
+      {
+        "key": "C",
+        "text": "The usage information returned with each API response, logged alongside request metadata"
+      },
+      {
+        "key": "D",
+        "text": "The model's text output, by asking it to report how many tokens it used"
+      }
+    ],
+    "correct": [
+      "C"
+    ],
+    "explanation": "Every response reports its own token usage, which is the reliable source for per-request cost tracking.",
+    "whyNot": "A relies on the model guessing; B is false; D is unrelated to token counts."
+  },
+  {
+    "id": "Q14 (MSO.14)",
+    "q_num": 14,
+    "domain": "Domain 5: Model Selection & Optimization (MSO)",
+    "type": "single",
+    "text": "Users report that some generated reports end mid-sentence. Logs show stop_reason is max_tokens on those responses. What is the correct diagnosis and fix?",
+    "options": [
+      {
+        "key": "A",
+        "text": "The model refused to continue; add a stronger system prompt"
+      },
+      {
+        "key": "B",
+        "text": "Temperature is too low, causing the model to stop early"
+      },
+      {
+        "key": "C",
+        "text": "The output hit the max_tokens ceiling; raise the limit to fit the expected output length and tighten formatting instructions if length is a concern"
+      },
+      {
+        "key": "D",
+        "text": "The input exceeded the context window; move the work to the Batches API"
+      }
+    ],
+    "correct": [
+      "C"
+    ],
+    "explanation": "stop_reason max_tokens means the response was cut off by the output limit.",
+    "whyNot": "refusals, context overflow and temperature have different symptoms and do not produce this stop reason."
+  },
+  {
+    "id": "Q15 (MSO.15)",
+    "q_num": 15,
+    "domain": "Domain 5: Model Selection & Optimization (MSO)",
+    "type": "single",
+    "text": "Cost analysis shows output tokens are a minority of total token volume but a large share of spend. Which is the best first optimisation?",
+    "options": [
+      {
+        "key": "A",
+        "text": "Switch to streaming, which bills output tokens at a lower rate"
+      },
+      {
+        "key": "B",
+        "text": "Raise temperature so that answers become shorter"
+      },
+      {
+        "key": "C",
+        "text": "Add more few-shot examples, since examples lower output cost"
+      },
+      {
+        "key": "D",
+        "text": "Reduce unnecessary output: specify concise formats, drop unneeded explanations and set sensible limits"
       }
     ],
     "correct": [
       "D"
     ],
-    "explanation": "Prompt caching keys on an exact, byte-identical prefix. Structure prompts with stable content first (system instructions, tools, static knowledge base, cache breakpoint) and per-request dynamic user inputs last.",
-    "whyNot": "A is backwards: caching is specifically designed for large prompts (up to full context). B is unrelated to cache matching. C contradicts the scenario."
+    "explanation": "Output tokens are priced higher than input, so trimming them gives the largest saving per token.",
+    "whyNot": "temperature does not shorten answers; examples add input tokens; streaming changes delivery, not price."
   },
   {
-    "id": "Q13 (2.9)",
-    "domain": "Domain 2: Resiliency & Rate Limiting",
+    "id": "Q16 (MSO.16)",
+    "q_num": 16,
+    "domain": "Domain 5: Model Selection & Optimization (MSO)",
     "type": "single",
-    "text": "A production integration intermittently receives HTTP 429 (rate limit) and 529 (overloaded) responses during traffic spikes. Requests currently retry instantly in a tight loop, making the problem worse. What is the correct client behaviour?",
+    "text": "An application repeats the same 30,000-token tool-and-policy prefix across thousands of requests per hour. Which change reduces both cost and time-to-first-token for these requests?",
     "options": [
       {
         "key": "A",
-        "text": "Treat 429 and 529 responses as fatal application errors and permanently drop the affected requests without retrying them"
+        "text": "Enable streaming, which lowers the number of input tokens processed"
       },
       {
         "key": "B",
-        "text": "Switch models whenever a 429 is received"
+        "text": "Mark the stable prefix for prompt caching and keep per-request content after it"
       },
       {
         "key": "C",
-        "text": "Retry with exponential backoff and jitter, honouring any Retry-After header, and cap total attempts"
+        "text": "Lower the temperature, which lets the model skip re-reading the prefix"
       },
       {
         "key": "D",
-        "text": "Increase temperature so requests complete faster"
+        "text": "Move the prefix to the end of the prompt so the model reads it last"
       }
     ],
     "correct": [
-      "C"
+      "B"
     ],
-    "explanation": "Transient capacity errors call for disciplined retries: back off exponentially, add random jitter so clients do not retry in lockstep (thundering herd), respect the server's Retry-After header, and bound maximum attempts.",
-    "whyNot": "A discards recoverable work. B does not resolve account-level rate limits and adds architectural complexity. D is meaningless: temperature affects sampling, not capacity."
+    "explanation": "Cached prefixes are read at a discount and processed faster.",
+    "whyNot": "streaming and temperature do not change input processing; moving the prefix to the end breaks prefix matching."
   },
   {
-    "id": "Q14 (2.10)",
-    "domain": "Domain 2: Throughput & Async Optimization",
+    "id": "Q17 (MSO.17)",
+    "q_num": 17,
+    "domain": "Domain 5: Model Selection & Optimization (MSO)",
     "type": "single",
-    "text": "A Python service summarises 300 independent documents per run by calling the Messages API in a serial for-loop. Each call takes about 20 seconds, so a run takes over 90 minutes. Results are needed within minutes. What is the right engineering fix?",
+    "text": "A team enables prompt caching for a 25,000-token prefix, but requests arrive about once every 20 minutes and the measured hit rate is low. What is the most likely explanation?",
     "options": [
       {
         "key": "A",
-        "text": "Issue the requests concurrently using async I/O with a bounded concurrency limit that respects the account’s rate limits"
+        "text": "Caching only works above 100 requests per minute"
       },
       {
         "key": "B",
-        "text": "Concatenate all 300 documents into one single large request, so the per-call overhead is eliminated"
+        "text": "Cache entries are stored only if temperature is zero"
       },
       {
         "key": "C",
-        "text": "Change the task to extract only the first sentence of each document so each call finishes in under a second"
+        "text": "The prefix is too large; caching supports only prompts under 10,000 tokens"
       },
       {
         "key": "D",
-        "text": "Move the 300 calls to the Message Batches API"
-      }
-    ],
-    "correct": [
-      "A"
-    ],
-    "explanation": "The documents are independent, so the work parallelizes cleanly. Asynchronous concurrency with an asyncio.Semaphore turns 300 sequential calls into overlapping requests while staying safely inside tier rate limits—finishing in minutes instead of 90 minutes.",
-    "whyNot": "B risks exceeding the context window and entangles unrelated outputs. C degrades product quality to bypass a simple engineering fix. D has a 24-hour completion SLA when results are needed in minutes."
-  },
-  {
-    "id": "Q15 (2.16)",
-    "domain": "Domain 2: Production Release Governance",
-    "type": "single",
-    "text": "A production application targets a model alias that always points to the newest release. Overnight, output formatting changes and downstream parsing breaks. Which configuration practice prevents this class of incident?",
-    "options": [
-      {
-        "key": "A",
-        "text": "Add a try/except around the parser and discard responses that fail"
-      },
-      {
-        "key": "B",
-        "text": "Instruct the model in the prompt never to change its behaviour"
-      },
-      {
-        "key": "C",
-        "text": "Only run the application during business hours, when new model releases are less likely to be rolled out"
-      },
-      {
-        "key": "D",
-        "text": "Pin production to a specific dated model snapshot and migrate deliberately, after running the eval suite against new releases"
+        "text": "Cached entries expire after a limited time-to-live; with gaps longer than that the prefix keeps being rewritten, so they should evaluate a longer-lived cache option or whether caching pays off at that cadence"
       }
     ],
     "correct": [
       "D"
     ],
-    "explanation": "Model version pinning makes upgrades a controlled engineering decision rather than an ambient surprise. Production stays on a known dated snapshot (e.g. claude-3-5-sonnet-20241022) until the new model is validated on the team's automated eval suite.",
-    "whyNot": "A silently drops production work. B cannot govern future model weights. C is wishful thinking: cloud APIs roll out globally across all time zones."
+    "explanation": "Caches expire, so low-frequency traffic can pay repeated write premiums.",
+    "whyNot": "A, B and C describe restrictions that do not exist."
   },
   {
-    "id": "Q16 (4.1)",
-    "domain": "Domain 4: Eval, Testing, and Debugging",
+    "id": "Q18 (MSO.18)",
+    "q_num": 18,
+    "domain": "Domain 5: Model Selection & Optimization (MSO)",
     "type": "single",
-    "text": "A RAG-backed assistant is giving users wrong answers. The team cannot tell whether the retrieval layer is returning irrelevant documents or the model is misreading good ones. What should they do first?",
+    "text": "A prompt consists of tool definitions, a system prompt, a shared reference document and the user's current question. Where should the cache breakpoint go?",
     "options": [
       {
         "key": "A",
-        "text": "Analyse traces of the failing requests — the retrieved documents, the assembled prompt, and the model output — to isolate where the failure originates"
+        "text": "After the user's question, so the entire prompt is cached"
       },
       {
         "key": "B",
-        "text": "Rewrite the system prompt with stronger, more emphatic instructions telling the model to be accurate and to rely only on the retrieved documents"
+        "text": "Before the tool definitions, so only the beginning is cached"
       },
       {
         "key": "C",
-        "text": "Upgrade to the largest available model, whose stronger reasoning will compensate for the failure regardless of which layer is actually causing the wrong answers"
+        "text": "Position does not matter, since cache matching ignores order"
       },
       {
         "key": "D",
-        "text": "Add a disclaimer to the UI while the team decides what to change"
+        "text": "After the shared reference document, so all stable content before it is cached and the user's question follows it"
       }
     ],
     "correct": [
-      "A"
+      "D"
     ],
-    "explanation": "Systematic debugging requires isolating variables. Inspecting request traces reveals whether the retriever retrieved bad context (retrieval failure) or the model hallucinated despite good context (generation failure) before taking corrective action.",
-    "whyNot": "B is guessing without diagnosis. C incurs unnecessary cost and cannot fix poor retrieval (garbage in, garbage out). D fails to diagnose the problem."
+    "explanation": "Caching matches an exact prefix; the user's question changes every time, so it must come after the breakpoint.",
+    "whyNot": "A includes changing content in the prefix; B caches almost nothing; D is false."
   },
   {
-    "id": "Q17 (6.1)",
-    "domain": "Domain 6: Prompt & Context Engineering",
+    "id": "Q19 (MSO.19)",
+    "q_num": 19,
+    "domain": "Domain 5: Model Selection & Optimization (MSO)",
     "type": "single",
-    "text": "A customer-service assistant must always respond in formal English, never discuss competitors, and always sign off with a case reference. These rules were placed in the first user message, and after long conversations the model begins to drift from them. Where should the rules live?",
+    "text": "Which workload is the poorest fit for the Message Batches API?",
     "options": [
       {
         "key": "A",
-        "text": "In every user message, appended automatically by the client so the rules are restated on each turn"
+        "text": "Nightly classification of the day's support tickets for a morning report"
       },
       {
         "key": "B",
-        "text": "In the system prompt, the designated place for persistent role, tone, and behavioural rules"
+        "text": "An in-app 'summarise this page' button where the user waits for the result"
       },
       {
         "key": "C",
-        "text": "In the final assistant message of each exchange"
+        "text": "Generating product descriptions for a catalogue refresh due next week"
       },
       {
         "key": "D",
-        "text": "In an external document that the model is told exists"
-      }
-    ],
-    "correct": [
-      "B"
-    ],
-    "explanation": "System prompts are the architected location for persistent behavioral constraints, tone, and guardrails that must endure across multi-turn interactions without drifting or bloating individual user message turns.",
-    "whyNot": "A causes massive context bloat and token waste. C puts instructions where they have no forward generation effect. D gives the model an inaccessible reference."
-  },
-  {
-    "id": "Q18 (6.2)",
-    "domain": "Domain 6: Prompt & Context Engineering",
-    "type": "single",
-    "text": "A long-running agent accumulates every raw tool result — full API payloads, complete file contents — in its context. After thirty steps, responses slow down and reasoning quality visibly degrades. Which technique addresses this?",
-    "options": [
-      {
-        "key": "A",
-        "text": "Prune and compact: strip or summarise verbose tool outputs after use, retaining decisions and key facts"
-      },
-      {
-        "key": "B",
-        "text": "Raise max_tokens so the model can produce longer answers despite the noise"
-      },
-      {
-        "key": "C",
-        "text": "Switch to a model with a much larger context window and continue accumulating raw tool outputs"
-      },
-      {
-        "key": "D",
-        "text": "Lower the temperature to help the model focus"
-      }
-    ],
-    "correct": [
-      "A"
-    ],
-    "explanation": "This is textbook context bloat. The remedy is context hygiene: prune obsolete tool outputs and compact intermediate history into concise summaries, keeping the attention window focused on high-signal data.",
-    "whyNot": "B addresses output generation ceiling, not input clutter. C postpones failure at higher cost—attention still degrades over raw payload noise. D does not remove a single distracting token."
-  },
-  {
-    "id": "Q19 (6.3)",
-    "domain": "Domain 6: Prompt & Context Engineering",
-    "type": "single",
-    "text": "An agent working on a focused implementation task must first research a large unfamiliar codebase. Loading the exploration into the main context would crowd out the task itself. Which pattern solves this?",
-    "options": [
-      {
-        "key": "A",
-        "text": "Context isolation: delegate the research to a subagent with its own context window, returning only a condensed summary of findings"
-      },
-      {
-        "key": "B",
-        "text": "Interleave research and implementation in one context, alternating between them"
-      },
-      {
-        "key": "C",
-        "text": "Skip the research phase entirely and let the model rely on its general training knowledge"
-      },
-      {
-        "key": "D",
-        "text": "Run the research in the main context, then ask the model to forget it"
-      }
-    ],
-    "correct": [
-      "A"
-    ],
-    "explanation": "Subagents provide context isolation: noisy, high-volume exploration runs inside a disposable context window, and only the distilled summary enters the primary agent's context, preserving tokens and attention focus.",
-    "whyNot": "B exhausts the main window with exploration junk. C encourages hallucinations. D is impossible: LLMs cannot selectively forget tokens present in their context window."
-  },
-  {
-    "id": "Q20 (6.5)",
-    "domain": "Domain 6: Prompt & Context Engineering",
-    "type": "single",
-    "text": "An enterprise contract assistant processes 80-page legal agreements. The prompt currently places the user's specific question at the very top, followed by the full agreement text. Model answers are frequently superficial. What structural prompt change measurably improves performance?",
-    "options": [
-      {
-        "key": "A",
-        "text": "Split the document into single pages and query each page individually"
-      },
-      {
-        "key": "B",
-        "text": "Place the long reference document first, and place the specific instructions and question at the bottom after the document"
-      },
-      {
-        "key": "C",
-        "text": "Remove the contract text and ask general legal questions"
-      },
-      {
-        "key": "D",
-        "text": "Truncate the contract to the first 10 pages only"
+        "text": "Re-scoring a year of historical conversations for a quality audit"
       }
     ],
     "correct": [
       "B"
     ],
-    "explanation": "In long-context architectures, structure matters: placing the reference document first and the question/instructions at the end ensures the model reads the user query with the full context already active in its attention mechanism, significantly improving retrieval and reasoning quality.",
-    "whyNot": "A destroys cross-clause legal relationships. C removes the ground truth. D arbitrarily discards material."
+    "explanation": "Batches are asynchronous with completion measured in hours, so they suit latency-tolerant work, not interactive features.",
+    "whyNot": "Refer to the correct rationale above."
   },
   {
-    "id": "Q21 (4.2)",
-    "domain": "Domain 4: Agent & Workflow Architectures",
+    "id": "Q20 (MSO.20)",
+    "q_num": 20,
+    "domain": "Domain 5: Model Selection & Optimization (MSO)",
     "type": "single",
-    "text": "An engineering team is building an automated customer support triage system. In 95% of cases, the user needs either an invoice download, order status lookup, or password reset link. A junior engineer suggests deploying an autonomous ReAct agent loop with unrestricted tool selection for every request. Why is a deterministic workflow or router pattern preferred over an autonomous agent here?",
+    "text": "A team is building a coding assistant needing good quality on moderately complex tasks, interactive response times and controlled cost. No evals exist yet. What is the sound approach?",
     "options": [
       {
         "key": "A",
-        "text": "A deterministic workflow provides lower latency, zero unnecessary tool hallucination risk, predictable cost, and easier debugging for well-defined, predictable paths"
+        "text": "Build an eval from representative tasks, start with a mid-tier model as a balanced candidate, then test one tier up and one tier down to find the best quality-cost point"
       },
       {
         "key": "B",
-        "text": "Autonomous agents are incapable of calling database lookup tools"
+        "text": "Pick the smallest tier because assistants mostly do autocomplete"
       },
       {
         "key": "C",
-        "text": "Deterministic workflows can only handle single-word user queries"
+        "text": "Pick the strongest tier because developers are demanding users"
       },
       {
         "key": "D",
-        "text": "Anthropic API models fail whenever an agentic loop executes more than two turns"
+        "text": "Pick by public leaderboard rank and skip building an eval"
       }
     ],
     "correct": [
       "A"
     ],
-    "explanation": "Anthropic best practices recommend starting with simple workflows (Prompt Chaining, Routing, or Parallelization) before jumping to autonomous agents. When task workflows are well-understood and predictable, deterministic routing guarantees lower latency, bounded costs, deterministic auditability, and eliminates tool-selection hallucination risk.",
-    "whyNot": "B is false because agents frequently use database tools. C is false because deterministic workflows can parse arbitrary input. D is false because models handle multi-turn agentic loops routinely."
+    "explanation": "Tier choice is an empirical decision; bracket the candidate with neighbouring tiers.",
+    "whyNot": "each guesses without measurement."
   },
   {
-    "id": "Q22 (4.3)",
-    "domain": "Domain 4: Agent & Workflow Architectures",
+    "id": "Q21 (MSO.21)",
+    "q_num": 21,
+    "domain": "Domain 5: Model Selection & Optimization (MSO)",
     "type": "single",
-    "text": "In the Orchestrator-Workers architectural pattern, what is the primary role of the Orchestrator LLM?",
+    "text": "Cheaper tiers fail 30% of a team's long-horizon agentic tasks, which must stay coherent across dozens of tool calls; the stronger tier fails 8%. Each failure costs a human 20 minutes to fix. What best justifies the stronger tier?",
     "options": [
       {
         "key": "A",
-        "text": "Execute low-level API network requests directly without delegating to any other process"
+        "text": "Per-token price alone decides, so the cheaper tier wins"
       },
       {
         "key": "B",
-        "text": "Break down a complex high-level objective into subtasks, dynamically spawn worker tasks, and synthesize worker outputs into the final response"
+        "text": "Failure cost: fewer failures can outweigh the higher per-token price, so compare cost per successful task"
       },
       {
         "key": "C",
-        "text": "Act as a static router that sends the user prompt to exactly one model tier without monitoring execution"
+        "text": "The failures must be prompt problems, so tier choice is irrelevant"
       },
       {
         "key": "D",
-        "text": "Continuously rewrite the user prompt until temperature reaches zero"
+        "text": "Stronger tiers are the right default for agents regardless of data"
       }
     ],
     "correct": [
       "B"
     ],
-    "explanation": "In the Orchestrator-Workers pattern, a central orchestrator model breaks down a complex problem dynamically into discrete subtasks, dispatches them to parallel or sequential worker calls, monitors intermediate progress, and combines their findings into a cohesive final synthesis.",
-    "whyNot": "A describes a worker or direct tool caller, not an orchestrator. C describes a basic router. D is nonsensical."
+    "explanation": "Total cost includes rework.",
+    "whyNot": "A and C ignore measurement; B assumes a cause without evidence."
   },
   {
-    "id": "Q23 (4.4)",
-    "domain": "Domain 4: Agent & Workflow Architectures",
+    "id": "Q22 (MSO.22)",
+    "q_num": 22,
+    "domain": "Domain 5: Model Selection & Optimization (MSO)",
     "type": "single",
-    "text": "An application requires high-quality translation of technical patents. The team uses an Evaluator-Optimizer loop. How does this architecture function?",
+    "text": "A cheaper model scores 94% overall against 95% for the incumbent, but nearly all of its failures are on refund requests above $1,000. What should the team do?",
     "options": [
       {
         "key": "A",
-        "text": "One model generates a candidate translation, a second evaluator model assesses it against criteria and generates feedback, and the generator iteratively refines the text until it passes"
+        "text": "Raise temperature so refund cases get more diverse reasoning"
       },
       {
         "key": "B",
-        "text": "The evaluator drops the request if the first draft is not 100% accurate without providing feedback"
+        "text": "Analyse results by segment and route high-value refund cases to the stronger model while moving the rest to the cheaper one"
       },
       {
         "key": "C",
-        "text": "The optimizer truncates the prompt context after each failure to save tokens"
+        "text": "Adopt it everywhere, since a 1% difference is within noise"
       },
       {
         "key": "D",
-        "text": "The evaluator translates the document into a third language and back"
-      }
-    ],
-    "correct": [
-      "A"
-    ],
-    "explanation": "The Evaluator-Optimizer pattern implements an iterative refinement loop: Generator produces initial candidate -> Evaluator critiques output against explicit rubrics/test cases -> Optimizer consumes targeted feedback and produces an improved draft, repeating until satisfactory quality or max iterations.",
-    "whyNot": "B fails to provide an iterative optimization loop. C discards context rather than refining content. D describes back-translation, not the Evaluator-Optimizer pattern."
-  },
-  {
-    "id": "Q24 (3.1)",
-    "domain": "Domain 3: Tool Use & Function Calling",
-    "type": "single",
-    "text": "When defining a custom tool in the Anthropic Messages API, which property inside `input_schema` is mandatory to specify the structural format of expected tool parameters?",
-    "options": [
-      {
-        "key": "A",
-        "text": "type: 'object'"
-      },
-      {
-        "key": "B",
-        "text": "format: 'xml'"
-      },
-      {
-        "key": "C",
-        "text": "engine: 'sql'"
-      },
-      {
-        "key": "D",
-        "text": "runtime: 'python'"
-      }
-    ],
-    "correct": [
-      "A"
-    ],
-    "explanation": "Anthropic tool definitions strictly require JSON Schema specification where `input_schema` must declare `type: 'object'` at the root level, containing the `properties` mapping and optionally `required` field lists.",
-    "whyNot": "B, C, and D are invalid root schema types in JSON Schema specification used by the Messages API."
-  },
-  {
-    "id": "Q25 (3.2)",
-    "domain": "Domain 3: Tool Use & Function Calling",
-    "type": "single",
-    "text": "During tool execution in an agent loop, an external SQL query tool fails with a 'Table not found: users_v2' error. What is the recommended way to handle this error in the Messages API?",
-    "options": [
-      {
-        "key": "A",
-        "text": "Crash the application and terminate the user session immediately"
-      },
-      {
-        "key": "B",
-        "text": "Send a `tool_result` content block containing the error message and set `is_error: true`, allowing the model to inspect the error and adjust its query"
-      },
-      {
-        "key": "C",
-        "text": "Silently replace the database error with a synthetic empty JSON array `{}`"
-      },
-      {
-        "key": "D",
-        "text": "Resend the identical previous request in an infinite retry loop"
+        "text": "Reject it entirely, since any failure disqualifies a model"
       }
     ],
     "correct": [
       "B"
     ],
-    "explanation": "Returning errors explicitly in a `tool_result` block with `is_error: true` lets the model inspect the exact failure message (e.g., table typo), correct its parameters, and retry with the right table name autonomously.",
-    "whyNot": "A creates fragile applications with poor user experience. C hides errors leading to hallucinations. D causes infinite loops and token exhaustion."
+    "explanation": "Aggregate scores can hide critical segments; segment-level routing captures savings safely.",
+    "whyNot": "Refer to the correct rationale above."
   },
   {
-    "id": "Q26 (3.3)",
-    "domain": "Domain 3: Tool Use & Function Calling",
+    "id": "Q23 (MSO.23)",
+    "q_num": 23,
+    "domain": "Domain 5: Model Selection & Optimization (MSO)",
+    "type": "single",
+    "text": "Which temperature guidance best fits an application that extracts invoice fields into JSON?",
+    "options": [
+      {
+        "key": "A",
+        "text": "Use maximum temperature and average five runs"
+      },
+      {
+        "key": "B",
+        "text": "Temperature has no effect on any output"
+      },
+      {
+        "key": "C",
+        "text": "Use a high temperature to improve extraction accuracy"
+      },
+      {
+        "key": "D",
+        "text": "Use a low temperature for more consistent output, and still validate every result"
+      }
+    ],
+    "correct": [
+      "D"
+    ],
+    "explanation": "Extraction wants consistency, but low temperature does not guarantee correctness or determinism, so validation remains necessary.",
+    "whyNot": "Refer to the correct rationale above."
+  },
+  {
+    "id": "Q24 (MSO.24)",
+    "q_num": 24,
+    "domain": "Domain 5: Model Selection & Optimization (MSO)",
+    "type": "single",
+    "text": "An application mixes simple look-ups with occasional hard analytical questions. The team uses adaptive thinking and wants a per-request cost lever without maintaining separate prompts. What should they use?",
+    "options": [
+      {
+        "key": "A",
+        "text": "Hard-code a large thinking budget for every request"
+      },
+      {
+        "key": "B",
+        "text": "Set the effort parameter lower for simple categories and higher for hard ones, then measure quality and cost per category"
+      },
+      {
+        "key": "C",
+        "text": "Set temperature to 0 for simple categories to disable reasoning"
+      },
+      {
+        "key": "D",
+        "text": "Enable fast mode on simple categories to reduce reasoning depth"
+      }
+    ],
+    "correct": [
+      "B"
+    ],
+    "explanation": "Effort is soft guidance on reasoning depth.",
+    "whyNot": "budgets are the older mechanism; temperature does not control thinking; fast mode changes generation speed, not reasoning."
+  },
+  {
+    "id": "Q25 (MSO.25)",
+    "q_num": 25,
+    "domain": "Domain 5: Model Selection & Optimization (MSO)",
+    "type": "single",
+    "text": "After enabling extended thinking, a team's bill rises sharply even though visible answers are the same length. What is the most likely explanation?",
+    "options": [
+      {
+        "key": "A",
+        "text": "Visible answers are secretly regenerated twice"
+      },
+      {
+        "key": "B",
+        "text": "Thinking tokens are generated and billed as output tokens even if they are not part of the final visible answer"
+      },
+      {
+        "key": "C",
+        "text": "Thinking tokens are billed at the cached-read rate"
+      },
+      {
+        "key": "D",
+        "text": "Enabling thinking disables prompt caching account-wide"
+      }
+    ],
+    "correct": [
+      "B"
+    ],
+    "explanation": "Reasoning consumes output tokens, adding cost and latency, so use it where evals show it helps.",
+    "whyNot": "Refer to the correct rationale above."
+  },
+  {
+    "id": "Q26 (MSO.26)",
+    "q_num": 26,
+    "domain": "Domain 5: Model Selection & Optimization (MSO)",
+    "type": "single",
+    "text": "A team wants Claude to answer questions over a 2-million-token internal knowledge base. What is the best architecture?",
+    "options": [
+      {
+        "key": "A",
+        "text": "Paste the whole knowledge base into every request"
+      },
+      {
+        "key": "B",
+        "text": "Split the corpus across several requests and let the user pick the best answer"
+      },
+      {
+        "key": "C",
+        "text": "Retrieve the most relevant passages for each question and include only those in the prompt"
+      },
+      {
+        "key": "D",
+        "text": "Summarise the knowledge base once into a paragraph and answer from that"
+      }
+    ],
+    "correct": [
+      "C"
+    ],
+    "explanation": "Retrieval keeps context small, cheap and focused.",
+    "whyNot": "the corpus does not fit; a single paragraph loses detail; D pushes the work onto the user."
+  },
+  {
+    "id": "Q27 (MSO.27)",
+    "q_num": 27,
+    "domain": "Domain 5: Model Selection & Optimization (MSO)",
+    "type": "single",
+    "text": "A developer notices the cost of each turn in a long chat keeps rising even though user messages are short. Why?",
+    "options": [
+      {
+        "key": "A",
+        "text": "Claude stores the conversation server-side and charges a retention fee per turn"
+      },
+      {
+        "key": "B",
+        "text": "Short messages incur a minimum charge that grows with turn count"
+      },
+      {
+        "key": "C",
+        "text": "Output tokens are repriced per turn as the conversation lengthens"
+      },
+      {
+        "key": "D",
+        "text": "The API is stateless, so the full conversation history is resent as input on every turn"
+      }
+    ],
+    "correct": [
+      "D"
+    ],
+    "explanation": "History must be supplied each turn. Mitigate by caching the stable prefix and summarising or trimming old turns.",
+    "whyNot": "Refer to the correct rationale above."
+  },
+  {
+    "id": "Q28 (MSO.28)",
+    "q_num": 28,
+    "domain": "Domain 5: Model Selection & Optimization (MSO)",
+    "type": "single",
+    "text": "Which statement about streaming is accurate?",
+    "options": [
+      {
+        "key": "A",
+        "text": "It is required in order to use prompt caching"
+      },
+      {
+        "key": "B",
+        "text": "It reduces perceived latency by delivering tokens as they are generated, but does not reduce token cost"
+      },
+      {
+        "key": "C",
+        "text": "It reduces cost because partial responses are billed at a discount"
+      },
+      {
+        "key": "D",
+        "text": "It makes responses deterministic"
+      }
+    ],
+    "correct": [
+      "B"
+    ],
+    "explanation": "Streaming changes when users see output, not how many tokens are generated or what they cost.",
+    "whyNot": "Refer to the correct rationale above."
+  },
+  {
+    "id": "Q29 (MSO.29)",
+    "q_num": 29,
+    "domain": "Domain 5: Model Selection & Optimization (MSO)",
+    "type": "single",
+    "text": "An agent answers a question by making ten independent look-up tool calls one after another, taking 40 seconds. The calls do not depend on each other. What is the best fix?",
+    "options": [
+      {
+        "key": "A",
+        "text": "Lower temperature so the agent makes fewer calls"
+      },
+      {
+        "key": "B",
+        "text": "Increase max_tokens"
+      },
+      {
+        "key": "C",
+        "text": "Switch the agent to batch processing"
+      },
+      {
+        "key": "D",
+        "text": "Allow the model to issue independent tool calls together and execute them concurrently, returning all results in the next turn"
+      }
+    ],
+    "correct": [
+      "D"
+    ],
+    "explanation": "Round trips dominate latency; parallel execution of independent calls removes them.",
+    "whyNot": "Refer to the correct rationale above."
+  },
+  {
+    "id": "Q30 (MSO.30)",
+    "q_num": 30,
+    "domain": "Domain 5: Model Selection & Optimization (MSO)",
+    "type": "single",
+    "text": "The primary model endpoint returns sustained 529 overloaded responses and retries with backoff are exhausted. What is a sound fallback design?",
+    "options": [
+      {
+        "key": "A",
+        "text": "Return a blank response and log nothing"
+      },
+      {
+        "key": "B",
+        "text": "Retry indefinitely at full speed until the endpoint recovers"
+      },
+      {
+        "key": "C",
+        "text": "Fail over to a pre-validated alternate model or route whose prompts and output format have been tested against the same eval suite"
+      },
+      {
+        "key": "D",
+        "text": "Fail over to any available model untested, since all models behave identically"
+      }
+    ],
+    "correct": [
+      "C"
+    ],
+    "explanation": "Fallbacks must be tested end to end.",
+    "whyNot": "models differ; hammering an overloaded service worsens it; silence hides failures."
+  },
+  {
+    "id": "Q31 (MSO.31)",
+    "q_num": 31,
+    "domain": "Domain 5: Model Selection & Optimization (MSO)",
+    "type": "single",
+    "text": "Which set of measurements allows a fair comparison of two candidate models for a production feature?",
+    "options": [
+      {
+        "key": "A",
+        "text": "Task quality on a representative eval, p50/p95 latency, and cost per successful task"
+      },
+      {
+        "key": "B",
+        "text": "Average response length, system-prompt size and temperature"
+      },
+      {
+        "key": "C",
+        "text": "Public benchmark rank, parameter count and release date"
+      },
+      {
+        "key": "D",
+        "text": "Developer preference, social media sentiment and brand recognition"
+      }
+    ],
+    "correct": [
+      "A"
+    ],
+    "explanation": "Compare on the three pillars - quality, latency, cost - using your own workload.",
+    "whyNot": "Refer to the correct rationale above."
+  },
+  {
+    "id": "Q32 (MSO.32)",
+    "q_num": 32,
+    "domain": "Domain 5: Model Selection & Optimization (MSO)",
+    "type": "single",
+    "text": "A team must cut spend by 30% on a working application with minimal quality risk. Which sequence is most sensible?",
+    "options": [
+      {
+        "key": "A",
+        "text": "First downgrade to the smallest tier, then repair quality problems as they appear"
+      },
+      {
+        "key": "B",
+        "text": "First shorten the system prompt to a few lines, whatever the effect"
+      },
+      {
+        "key": "C",
+        "text": "First apply low-risk savings - caching stable prefixes, trimming irrelevant context, constraining output, batching offline work - then test a smaller model with evals"
+      },
+      {
+        "key": "D",
+        "text": "First ask users to write shorter messages"
+      }
+    ],
+    "correct": [
+      "C"
+    ],
+    "explanation": "Do the changes that preserve behaviour first; model downgrades carry the most quality risk.",
+    "whyNot": "Refer to the correct rationale above."
+  },
+  {
+    "id": "Q33 (MSO.33)",
+    "q_num": 33,
+    "domain": "Domain 5: Model Selection & Optimization (MSO)",
+    "type": "single",
+    "text": "A developer rewrote prompts across the application last month 'to improve performance' but kept no baseline measurements. Leadership asks whether it worked. What is the situation?",
+    "options": [
+      {
+        "key": "A",
+        "text": "Absence of user complaints proves it worked"
+      },
+      {
+        "key": "B",
+        "text": "Without a baseline and a consistent eval the improvement cannot be demonstrated; establish one before further changes"
+      },
+      {
+        "key": "C",
+        "text": "It can be inferred from the new prompts being shorter"
+      },
+      {
+        "key": "D",
+        "text": "Ask the model whether its responses got better"
+      }
+    ],
+    "correct": [
+      "B"
+    ],
+    "explanation": "Optimisation claims require before-and-after measurement on the same eval.",
+    "whyNot": "Refer to the correct rationale above."
+  },
+  {
+    "id": "Q34 (MSO.34)",
+    "q_num": 34,
+    "domain": "Domain 5: Model Selection & Optimization (MSO)",
+    "type": "single",
+    "text": "A team tunes prompts repeatedly against the same 50 examples and reports 98% accuracy, but production accuracy is much lower. What went wrong?",
+    "options": [
+      {
+        "key": "A",
+        "text": "Temperature was too low during tuning"
+      },
+      {
+        "key": "B",
+        "text": "They overfit the prompt to the tuning examples; they needed a held-out test set not used during iteration"
+      },
+      {
+        "key": "C",
+        "text": "Accuracy always drops in production, regardless of method"
+      },
+      {
+        "key": "D",
+        "text": "The eval set was too large"
+      }
+    ],
+    "correct": [
+      "B"
+    ],
+    "explanation": "Iterating against the same data inflates scores; a held-out set gives an honest estimate.",
+    "whyNot": "Refer to the correct rationale above."
+  },
+  {
+    "id": "Q35 (MSO.35)",
+    "q_num": 35,
+    "domain": "Domain 5: Model Selection & Optimization (MSO)",
+    "type": "single",
+    "text": "A team uses a model-based grader to score thousands of outputs. Scores look high, but customers complain. What should they do?",
+    "options": [
+      {
+        "key": "A",
+        "text": "Trust the grader, since a model's judgement is objective"
+      },
+      {
+        "key": "B",
+        "text": "Replace the rubric with one overall 1-10 quality score"
+      },
+      {
+        "key": "C",
+        "text": "Calibrate the grader against human-labelled samples and refine the rubric where they disagree"
+      },
+      {
+        "key": "D",
+        "text": "Stop grading and rely only on complaints"
+      }
+    ],
+    "correct": [
+      "C"
+    ],
+    "explanation": "Automated graders scale evaluation but must be validated against human judgement.",
+    "whyNot": "Refer to the correct rationale above."
+  },
+  {
+    "id": "Q36 (MSO.36)",
+    "q_num": 36,
+    "domain": "Domain 5: Model Selection & Optimization (MSO)",
+    "type": "single",
+    "text": "The same prompt scores 86% on one eval run and 91% on the next, and the team cannot decide whether a change helped. What is the best practice?",
+    "options": [
+      {
+        "key": "A",
+        "text": "Rerun until the new version wins"
+      },
+      {
+        "key": "B",
+        "text": "Run multiple trials on a large enough eval, compare averages or distributions, and treat small differences as noise"
+      },
+      {
+        "key": "C",
+        "text": "Set temperature to 0 and assume results are perfectly repeatable"
+      },
+      {
+        "key": "D",
+        "text": "Take the best run for each version"
+      }
+    ],
+    "correct": [
+      "B"
+    ],
+    "explanation": "Generation is not perfectly deterministic, so single runs are noisy.",
+    "whyNot": "Refer to the correct rationale above."
+  },
+  {
+    "id": "Q37 (MSO.37)",
+    "q_num": 37,
+    "domain": "Domain 5: Model Selection & Optimization (MSO)",
+    "type": "single",
+    "text": "Model X costs 40% less per request than Model Y but needs a retry on 35% of requests because of invalid output. Which metric best supports the decision?",
+    "options": [
+      {
+        "key": "A",
+        "text": "Price per million input tokens only"
+      },
+      {
+        "key": "B",
+        "text": "Cost per request only"
+      },
+      {
+        "key": "C",
+        "text": "Average latency only"
+      },
+      {
+        "key": "D",
+        "text": "Cost per successful task, including retries and any escalation"
+      }
+    ],
+    "correct": [
+      "D"
+    ],
+    "explanation": "Retries and failures add hidden cost that per-request price hides.",
+    "whyNot": "Refer to the correct rationale above."
+  },
+  {
+    "id": "Q38 (MSO.38)",
+    "q_num": 38,
+    "domain": "Domain 5: Model Selection & Optimization (MSO)",
+    "type": "single",
+    "text": "After migrating to a newer model, a tool-heavy agent calls tools unnecessarily. The prompt contains emphatic instructions such as 'ALWAYS use the search tool', written for an earlier model. What is the best response?",
+    "options": [
+      {
+        "key": "A",
+        "text": "Make the instruction even more emphatic"
+      },
+      {
+        "key": "B",
+        "text": "Revert to the old model permanently without testing"
+      },
+      {
+        "key": "C",
+        "text": "Re-evaluate the prompt on the new model, soften or remove emphasis that older models needed, and check the eval suite after each change"
+      },
+      {
+        "key": "D",
+        "text": "Remove all tool descriptions"
+      }
+    ],
+    "correct": [
+      "C"
+    ],
+    "explanation": "Prompts tuned to one model can be over-applied by another; retune and measure.",
+    "whyNot": "Refer to the correct rationale above."
+  },
+  {
+    "id": "Q39 (MSO.39)",
+    "q_num": 39,
+    "domain": "Domain 5: Model Selection & Optimization (MSO)",
+    "type": "single",
+    "text": "6% of responses fail JSON parsing and the retry loop inflates cost and latency. Which change most directly reduces failures?",
+    "options": [
+      {
+        "key": "A",
+        "text": "Raise the temperature"
+      },
+      {
+        "key": "B",
+        "text": "Enforce structure with a schema (structured outputs, or tool use with an input schema) and validate before use"
+      },
+      {
+        "key": "C",
+        "text": "Ask in capital letters that the model be careful with JSON"
+      },
+      {
+        "key": "D",
+        "text": "Retry up to 20 times"
+      }
+    ],
+    "correct": [
+      "B"
+    ],
+    "explanation": "Schema enforcement removes a class of format failures at the source.",
+    "whyNot": "Refer to the correct rationale above."
+  },
+  {
+    "id": "Q40 (MSO.40)",
+    "q_num": 40,
+    "domain": "Domain 5: Model Selection & Optimization (MSO)",
+    "type": "single",
+    "text": "A receipt-extraction service sends 12-megapixel photos, and image token cost and latency are high. Accuracy on the extraction eval is already well above target. What is a sensible optimisation?",
+    "options": [
+      {
+        "key": "A",
+        "text": "Downscale or compress images to the smallest resolution that still meets the accuracy target, verifying with the eval"
+      },
+      {
+        "key": "B",
+        "text": "Send each photo three times and take the majority answer"
+      },
+      {
+        "key": "C",
+        "text": "Stop using images and ask users to type values"
+      },
+      {
+        "key": "D",
+        "text": "Upscale the images so the model sees more detail"
+      }
+    ],
+    "correct": [
+      "A"
+    ],
+    "explanation": "Image size affects tokens and latency; trim to what the task needs and verify.",
+    "whyNot": "Refer to the correct rationale above."
+  },
+  {
+    "id": "Q41 (MSO.41)",
+    "q_num": 41,
+    "domain": "Domain 5: Model Selection & Optimization (MSO)",
+    "type": "single",
+    "text": "A service hits tokens-per-minute rate limits during peaks although the request count is modest. Which response addresses the cause?",
+    "options": [
+      {
+        "key": "A",
+        "text": "Use larger prompts to complete work in fewer requests"
+      },
+      {
+        "key": "B",
+        "text": "Increase temperature"
+      },
+      {
+        "key": "C",
+        "text": "Retry immediately in a tight loop"
+      },
+      {
+        "key": "D",
+        "text": "Reduce tokens per request (trim context, constrain output), smooth traffic with queuing, and request a limit increase if still needed"
+      }
+    ],
+    "correct": [
+      "D"
+    ],
+    "explanation": "The limit is on tokens, so reduce and smooth token demand.",
+    "whyNot": "they worsen or ignore the cause."
+  },
+  {
+    "id": "Q42 (MSO.42)",
+    "q_num": 42,
+    "domain": "Domain 5: Model Selection & Optimization (MSO)",
+    "type": "single",
+    "text": "A system prompt has grown to 15,000 tokens through accumulated edge-case rules, and nobody knows which rules matter. What is the best way to trim it?",
+    "options": [
+      {
+        "key": "A",
+        "text": "Ask the model to rewrite its own prompt and ship it directly"
+      },
+      {
+        "key": "B",
+        "text": "Leave it, because longer prompts always perform better"
+      },
+      {
+        "key": "C",
+        "text": "Run ablation tests: remove sections and measure the eval impact, keeping only those with a measurable benefit"
+      },
+      {
+        "key": "D",
+        "text": "Delete the oldest half of the prompt"
+      }
+    ],
+    "correct": [
+      "C"
+    ],
+    "explanation": "Evidence-based pruning reduces tokens without guessing.",
+    "whyNot": "Refer to the correct rationale above."
+  },
+  {
+    "id": "Q43 (MSO.43)",
+    "q_num": 43,
+    "domain": "Domain 5: Model Selection & Optimization (MSO)",
+    "type": "single",
+    "text": "A pipeline asks for a single-line answer, but the model sometimes appends explanations, costing tokens. Which combination best controls this?",
+    "options": [
+      {
+        "key": "A",
+        "text": "Raise max_tokens so that the explanation can finish"
+      },
+      {
+        "key": "B",
+        "text": "Add a long preamble about brevity and no other change"
+      },
+      {
+        "key": "C",
+        "text": "Specify the exact output format in the prompt and use a sensible max_tokens, with stop sequences where appropriate"
+      },
+      {
+        "key": "D",
+        "text": "Raise temperature so the model varies its length"
+      }
+    ],
+    "correct": [
+      "C"
+    ],
+    "explanation": "Clear format instructions plus limits bound output cost and latency.",
+    "whyNot": "Refer to the correct rationale above."
+  },
+  {
+    "id": "Q44 (MSO.44)",
+    "q_num": 44,
+    "domain": "Domain 5: Model Selection & Optimization (MSO)",
+    "type": "single",
+    "text": "After a prompt change, quality dropped but the team cannot tell when it began. Which logging would have helped most?",
+    "options": [
+      {
+        "key": "A",
+        "text": "The developer's name for each deployment"
+      },
+      {
+        "key": "B",
+        "text": "Prompt version, model version, token counts, latency and quality signals recorded with every request"
+      },
+      {
+        "key": "C",
+        "text": "Nothing, to minimise storage"
+      },
+      {
+        "key": "D",
+        "text": "Only HTTP status codes"
+      }
+    ],
+    "correct": [
+      "B"
+    ],
+    "explanation": "Versioned observability allows regressions to be traced to a specific change.",
+    "whyNot": "Refer to the correct rationale above."
+  },
+  {
+    "id": "Q45 (MSO.45)",
+    "q_num": 45,
+    "domain": "Domain 5: Model Selection & Optimization (MSO)",
+    "type": "single",
+    "text": "After migrating to a newer model with identical per-token prices and identical request volume, the monthly bill rises about 15%. What should the team check first?",
+    "options": [
+      {
+        "key": "A",
+        "text": "Whether the API silently adds a surcharge for newer models"
+      },
+      {
+        "key": "B",
+        "text": "Whether temperature defaults changed to a more expensive value"
+      },
+      {
+        "key": "C",
+        "text": "Nothing; bills fluctuate randomly"
+      },
+      {
+        "key": "D",
+        "text": "Whether the same text now tokenizes into more tokens and whether output length changed, using token counting and usage data"
+      }
+    ],
+    "correct": [
+      "D"
+    ],
+    "explanation": "Token counts for the same text can differ between model generations, so re-measure cost on migration.",
+    "whyNot": "Refer to the correct rationale above."
+  },
+  {
+    "id": "Q46 (MSO.46)",
+    "q_num": 46,
+    "domain": "Domain 5: Model Selection & Optimization (MSO)",
+    "type": "single",
+    "text": "A team splits a complex task into three sequential prompts, each on a smaller model, instead of one large prompt on a strong model. What trade-off should they expect?",
+    "options": [
+      {
+        "key": "A",
+        "text": "No latency change because the steps run in parallel automatically"
+      },
+      {
+        "key": "B",
+        "text": "Added end-to-end latency and orchestration complexity in exchange for lower per-step cost and easier debugging; measure both end to end"
+      },
+      {
+        "key": "C",
+        "text": "Strictly lower latency and strictly higher quality"
+      },
+      {
+        "key": "D",
+        "text": "Guaranteed lower quality"
+      }
+    ],
+    "correct": [
+      "B"
+    ],
+    "explanation": "Chaining trades latency and complexity for cost and control; the outcome is task-dependent and must be measured.",
+    "whyNot": "Refer to the correct rationale above."
+  },
+  {
+    "id": "Q47 (MSO.47)",
+    "q_num": 47,
+    "domain": "Domain 5: Model Selection & Optimization (MSO)",
+    "type": "single",
+    "text": "A developer believes that raising max_tokens from 1,000 to 8,000 will raise the bill for every request, even those with short answers. What is accurate?",
+    "options": [
+      {
+        "key": "A",
+        "text": "max_tokens is a ceiling; billing follows the tokens actually generated, though very high ceilings can matter for context budgeting and rate-limit estimates"
+      },
+      {
+        "key": "B",
+        "text": "It changes the price per token"
+      },
+      {
+        "key": "C",
+        "text": "Every request is billed for the full max_tokens"
+      },
+      {
+        "key": "D",
+        "text": "Raising it makes the model write longer answers automatically"
+      }
+    ],
+    "correct": [
+      "A"
+    ],
+    "explanation": "You pay for generated tokens, not for the ceiling.",
+    "whyNot": "Refer to the correct rationale above."
+  },
+  {
+    "id": "Q48 (MSO.48)",
+    "q_num": 48,
+    "domain": "Domain 5: Model Selection & Optimization (MSO)",
+    "type": "single",
+    "text": "A prompt begins with tool definitions that are regenerated per request in varying order. Cache hit rate is near zero although the system prompt and knowledge base are stable. Why?",
+    "options": [
+      {
+        "key": "A",
+        "text": "Caching can cover system prompts but never tools"
+      },
+      {
+        "key": "B",
+        "text": "Tool definitions are billed separately and excluded from caching"
+      },
+      {
+        "key": "C",
+        "text": "Caching requires streaming"
+      },
+      {
+        "key": "D",
+        "text": "Cache matching is on an exact prefix and tool definitions come first, so any change or reordering invalidates everything after them; make them stable and ordered"
+      }
+    ],
+    "correct": [
+      "D"
+    ],
+    "explanation": "Keep the earliest parts of the prompt byte-stable.",
+    "whyNot": "Refer to the correct rationale above."
+  },
+  {
+    "id": "Q49 (MSO.49)",
+    "q_num": 49,
+    "domain": "Domain 5: Model Selection & Optimization (MSO)",
+    "type": "single",
+    "text": "An agent loop makes 25 model calls per task with context growing each call, and the team's estimate based on 'one call' was far too low. What drives agent cost?",
+    "options": [
+      {
+        "key": "A",
+        "text": "Tool results are free"
+      },
+      {
+        "key": "B",
+        "text": "Each iteration resends the accumulated context, so total input grows across steps; caching stable prefixes, pruning tool output and bounding loops with budgets control it"
+      },
+      {
+        "key": "C",
+        "text": "Only the final call is billed"
+      },
+      {
+        "key": "D",
+        "text": "Agents are billed a flat rate per task"
+      }
+    ],
+    "correct": [
+      "B"
+    ],
+    "explanation": "Agentic cost scales with the number of iterations and context size.",
+    "whyNot": "Refer to the correct rationale above."
+  },
+  {
+    "id": "Q50 (MSO.50)",
+    "q_num": 50,
+    "domain": "Domain 5: Model Selection & Optimization (MSO)",
+    "type": "single",
+    "text": "A team debates a larger model with a zero-shot prompt versus a smaller model with five well-chosen examples for a formatting-heavy task. How should they decide?",
+    "options": [
+      {
+        "key": "A",
+        "text": "Pick whichever has the shorter prompt"
+      },
+      {
+        "key": "B",
+        "text": "Always pick the larger model"
+      },
+      {
+        "key": "C",
+        "text": "Always pick the smaller model"
+      },
+      {
+        "key": "D",
+        "text": "Evaluate both configurations on the same eval and compare quality, latency and cost"
+      }
+    ],
+    "correct": [
+      "D"
+    ],
+    "explanation": "Configuration choices are empirical.",
+    "whyNot": "Refer to the correct rationale above."
+  },
+  {
+    "id": "Q51 (MSO.51)",
+    "q_num": 51,
+    "domain": "Domain 5: Model Selection & Optimization (MSO)",
+    "type": "single",
+    "text": "A feature launched with strong eval scores. Three months later quality drifts as user inputs change. Which practice best detects this?",
+    "options": [
+      {
+        "key": "A",
+        "text": "Sample production traffic regularly, grade it, and refresh the eval set with new real-world cases"
+      },
+      {
+        "key": "B",
+        "text": "Freeze the eval set so comparisons stay constant forever"
+      },
+      {
+        "key": "C",
+        "text": "Wait for formal complaints"
+      },
+      {
+        "key": "D",
+        "text": "Assume drift is impossible with a pinned model"
+      }
+    ],
+    "correct": [
+      "A"
+    ],
+    "explanation": "Pinning controls the model, not the inputs; production sampling catches drift.",
+    "whyNot": "Refer to the correct rationale above."
+  },
+  {
+    "id": "Q52 (MSO.52)",
+    "q_num": 52,
+    "domain": "Domain 5: Model Selection & Optimization (MSO)",
+    "type": "single",
+    "text": "Which mapping of workload to invocation pattern is most appropriate?",
+    "options": [
+      {
+        "key": "A",
+        "text": "Live chat: synchronous with streaming; overnight re-classification: Batches API; repeated questions over one large document: prompt caching"
+      },
+      {
+        "key": "B",
+        "text": "Live chat: caching only; overnight re-classification: streaming; repeated questions: Batches API"
+      },
+      {
+        "key": "C",
+        "text": "Live chat: synchronous without streaming; overnight re-classification: caching only; repeated questions: Batches API"
+      },
+      {
+        "key": "D",
+        "text": "Live chat: Batches API for cost; overnight re-classification: synchronous streaming; repeated questions: resend the document uncached"
+      }
+    ],
+    "correct": [
+      "A"
+    ],
+    "explanation": "Match latency tolerance and repetition to the pattern.",
+    "whyNot": "Refer to the correct rationale above."
+  },
+  {
+    "id": "Q53 (MSO.53)",
+    "q_num": 53,
+    "domain": "Domain 5: Model Selection & Optimization (MSO)",
+    "type": "single",
+    "text": "A prompt includes 3,000 tokens of fixed few-shot examples sent with every request. Which is the best way to cut their cost while preserving quality?",
+    "options": [
+      {
+        "key": "A",
+        "text": "Move the examples to the end of each prompt"
+      },
+      {
+        "key": "B",
+        "text": "Keep the examples in the stable cached prefix so repeated requests read them at the cached rate"
+      },
+      {
+        "key": "C",
+        "text": "Randomly include half of each example"
+      },
+      {
+        "key": "D",
+        "text": "Remove the examples without testing"
+      }
+    ],
+    "correct": [
+      "B"
+    ],
+    "explanation": "Fixed examples are ideal cache content.",
+    "whyNot": "removal is unmeasured; moving to the end breaks the prefix; partial examples degrade quality."
+  },
+  {
+    "id": "Q54 (MSO.54)",
+    "q_num": 54,
+    "domain": "Domain 5: Model Selection & Optimization (MSO)",
+    "type": "single",
+    "text": "A voice assistant needs the first spoken words within about a second. Which combination fits best?",
+    "options": [
+      {
+        "key": "A",
+        "text": "The Batches API with a 24-hour window"
+      },
+      {
+        "key": "B",
+        "text": "A fast, small-tier model with streaming, short prompts and a cached stable prefix"
+      },
+      {
+        "key": "C",
+        "text": "Non-streamed responses with a long system prompt"
+      },
+      {
+        "key": "D",
+        "text": "The largest tier with high effort for the best answers"
+      }
+    ],
+    "correct": [
+      "B"
+    ],
+    "explanation": "Time to first token dominates; reduce model size, prompt size and use streaming.",
+    "whyNot": "Refer to the correct rationale above."
+  },
+  {
+    "id": "Q55 (MSO.55)",
+    "q_num": 55,
+    "domain": "Domain 5: Model Selection & Optimization (MSO)",
     "type": "multiple",
-    "text": "Which TWO statements accurately describe the Model Context Protocol (MCP)? (Select TWO)",
+    "text": "Which TWO workloads benefit most from prompt caching?",
     "options": [
       {
         "key": "A",
-        "text": "MCP establishes an open standard for securely connecting AI models to external data sources, tools, and developer environments"
+        "text": "Prompts that begin with a per-request timestamp and user ID"
       },
       {
         "key": "B",
-        "text": "MCP replaces the need for LLMs by executing all reasoning inside local operating system drivers"
+        "text": "Multi-turn chat with a long, stable system prompt and tool set"
       },
       {
         "key": "C",
-        "text": "An MCP client (such as Claude Desktop or an agent) can connect to multiple MCP servers simultaneously to access diverse tools and resources"
+        "text": "A stream of one-off, unique documents each processed once"
       },
       {
         "key": "D",
-        "text": "MCP requires all data payloads to be pre-translated into binary assembly code"
+        "text": "Many questions asked over the same large document"
       },
       {
         "key": "E",
-        "text": "MCP tools cannot be used with Claude 3.5 Sonnet"
+        "text": "Requests that change the tool definitions on every call"
+      }
+    ],
+    "correct": [
+      "B",
+      "D"
+    ],
+    "explanation": "Caching pays when a large, stable prefix is reused. The other options break or never reuse the prefix.",
+    "whyNot": "Refer to the correct rationale above."
+  },
+  {
+    "id": "Q56 (MSO.56)",
+    "q_num": 56,
+    "domain": "Domain 5: Model Selection & Optimization (MSO)",
+    "type": "multiple",
+    "text": "Which TWO considerations should drive model selection for a new feature?",
+    "options": [
+      {
+        "key": "A",
+        "text": "Measured quality on an eval built from the real task"
+      },
+      {
+        "key": "B",
+        "text": "Which model a competitor is rumoured to use"
+      },
+      {
+        "key": "C",
+        "text": "Which model was announced most recently"
+      },
+      {
+        "key": "D",
+        "text": "The length of the model's name"
+      },
+      {
+        "key": "E",
+        "text": "Fit with hard requirements: context size, modality, latency and cost targets"
       }
     ],
     "correct": [
       "A",
+      "E"
+    ],
+    "explanation": "Selection rests on task evidence and requirements, not hype.",
+    "whyNot": "Refer to the correct rationale above."
+  },
+  {
+    "id": "Q57 (MSO.57)",
+    "q_num": 57,
+    "domain": "Domain 5: Model Selection & Optimization (MSO)",
+    "type": "multiple",
+    "text": "Which TWO actions most directly reduce output-token cost?",
+    "options": [
+      {
+        "key": "A",
+        "text": "Raise temperature so the model finishes sooner"
+      },
+      {
+        "key": "B",
+        "text": "Enable streaming so output is billed at a reduced rate"
+      },
+      {
+        "key": "C",
+        "text": "Set max_tokens (and stop sequences where suitable) to bound runaway output"
+      },
+      {
+        "key": "D",
+        "text": "Specify a concise output format and omit unneeded explanations"
+      },
+      {
+        "key": "E",
+        "text": "Add more background context so the model writes less"
+      }
+    ],
+    "correct": [
+      "C",
+      "D"
+    ],
+    "explanation": "Control the length of what is generated; the others do not.",
+    "whyNot": "Refer to the correct rationale above."
+  },
+  {
+    "id": "Q58 (MSO.58)",
+    "q_num": 58,
+    "domain": "Domain 5: Model Selection & Optimization (MSO)",
+    "type": "multiple",
+    "text": "Which TWO are sound triggers for escalating from a cheaper model to a stronger one in a cascade?",
+    "options": [
+      {
+        "key": "A",
+        "text": "The request arrived on a weekday"
+      },
+      {
+        "key": "B",
+        "text": "A calibrated quality or confidence check falls below a defined threshold"
+      },
+      {
+        "key": "C",
+        "text": "The user's message contains a question mark"
+      },
+      {
+        "key": "D",
+        "text": "The cheaper model replied quickly"
+      },
+      {
+        "key": "E",
+        "text": "Output fails schema or rule-based validation"
+      }
+    ],
+    "correct": [
+      "B",
+      "E"
+    ],
+    "explanation": "Escalate on objective quality signals, not incidental properties.",
+    "whyNot": "Refer to the correct rationale above."
+  },
+  {
+    "id": "Q59 (MSO.59)",
+    "q_num": 59,
+    "domain": "Domain 5: Model Selection & Optimization (MSO)",
+    "type": "multiple",
+    "text": "Which TWO statements about the Message Batches API are accurate?",
+    "options": [
+      {
+        "key": "A",
+        "text": "Results are returned asynchronously, typically within a 24-hour window"
+      },
+      {
+        "key": "B",
+        "text": "Batches stream tokens to the end user in real time"
+      },
+      {
+        "key": "C",
+        "text": "Batches guarantee identical outputs across runs"
+      },
+      {
+        "key": "D",
+        "text": "Batches are ideal for interactive features because they bypass queues"
+      },
+      {
+        "key": "E",
+        "text": "Batch requests are priced at a discount compared with standard synchronous requests"
+      }
+    ],
+    "correct": [
+      "A",
+      "E"
+    ],
+    "explanation": "Batch trades immediacy for cost savings on latency-tolerant workloads.",
+    "whyNot": "Refer to the correct rationale above."
+  },
+  {
+    "id": "Q60 (MSO.60)",
+    "q_num": 60,
+    "domain": "Domain 5: Model Selection & Optimization (MSO)",
+    "type": "multiple",
+    "text": "Which TWO are valid reasons to pin production to a specific model snapshot?",
+    "options": [
+      {
+        "key": "A",
+        "text": "Pinned snapshots are exempt from deprecation"
+      },
+      {
+        "key": "B",
+        "text": "Behaviour stays consistent until the team deliberately migrates"
+      },
+      {
+        "key": "C",
+        "text": "Upgrades can be validated with the eval suite before production sees them"
+      },
+      {
+        "key": "D",
+        "text": "Pinned snapshots have lower per-token prices"
+      },
+      {
+        "key": "E",
+        "text": "Pinning removes the need for monitoring"
+      }
+    ],
+    "correct": [
+      "B",
       "C"
     ],
-    "explanation": "MCP is an open standard that standardizes how applications provide context and tools to LLMs. MCP clients can connect to multiple MCP servers (e.g. GitHub, Postgres, local files) over standard transports (stdio, SSE) simultaneously.",
-    "whyNot": "B is absurd as MCP is an integration protocol for LLMs. D is false (MCP uses JSON-RPC). E is false as Claude 3.5 Sonnet natively integrates with MCP."
-  },
-  {
-    "id": "Q27 (2.8)",
-    "domain": "Domain 2: Prompt & Context Engineering",
-    "type": "single",
-    "text": "What is the minimum token threshold required to create a prompt cache breakpoint on Claude 3.5 Sonnet?",
-    "options": [
-      {
-        "key": "A",
-        "text": "1,024 tokens"
-      },
-      {
-        "key": "B",
-        "text": "100 tokens"
-      },
-      {
-        "key": "C",
-        "text": "10,000 tokens"
-      },
-      {
-        "key": "D",
-        "text": "50,000 tokens"
-      }
-    ],
-    "correct": [
-      "A"
-    ],
-    "explanation": "On Claude 3.5 Sonnet and Claude 3 Opus, the minimum prefix length eligible for prompt caching is 1,024 tokens (and 2,048 tokens on Claude 3 Haiku). Requests with prefixes smaller than this minimum threshold bypass caching.",
-    "whyNot": "B is far below the minimum cache threshold. C and D are eligible but much higher than the actual minimum requirement of 1,024 tokens."
-  },
-  {
-    "id": "Q28 (2.11)",
-    "domain": "Domain 2: Prompt & Context Engineering",
-    "type": "single",
-    "text": "A team wants to cache a multi-turn conversation in an interactive support bot. Which strategy achieves the highest cache hit rate while conversations evolve?",
-    "options": [
-      {
-        "key": "A",
-        "text": "Place a cache breakpoint on every single turn in the conversation"
-      },
-      {
-        "key": "B",
-        "text": "Place a cache breakpoint on the static system prompt and tools, and optionally on the penultimate user message turn as history grows"
-      },
-      {
-        "key": "C",
-        "text": "Place the cache breakpoint on the user's latest message only"
-      },
-      {
-        "key": "D",
-        "text": "Clear the cache on every user keystroke"
-      }
-    ],
-    "correct": [
-      "B"
-    ],
-    "explanation": "Best practice for multi-turn prompt caching: Cache the static system prompt + tool definitions (permanent cache hit), and place a rolling cache breakpoint on the previous turn (penultimate turn). The historical transcript up to that point is read from cache, while only the latest turn is newly written.",
-    "whyNot": "A wastes cache write budgets (Anthropic supports up to 4 cache breakpoints per request). C misses cache hits because the latest message changes on every turn. D defeats caching entirely."
-  },
-  {
-    "id": "Q29 (1.1)",
-    "domain": "Domain 1: Anthropic API Architecture & SDK",
-    "type": "single",
-    "text": "When receiving a streaming response from the Anthropic Messages API, which Server-Sent Event (SSE) indicates that a tool call has completed its parameter generation?",
-    "options": [
-      {
-        "key": "A",
-        "text": "content_block_stop"
-      },
-      {
-        "key": "B",
-        "text": "message_abort"
-      },
-      {
-        "key": "C",
-        "text": "stream_reset"
-      },
-      {
-        "key": "D",
-        "text": "tool_execute_now"
-      }
-    ],
-    "correct": [
-      "A"
-    ],
-    "explanation": "In Anthropic's streaming event protocol, each content block begins with content_block_start (identifying text or tool_use), streams chunks with content_block_delta (e.g. input_json_delta), and terminates with content_block_stop. Once content_block_stop fires for a tool_use block, the client has the complete JSON parameters.",
-    "whyNot": "B, C, and D are non-existent SSE events in the Anthropic streaming API."
-  },
-  {
-    "id": "Q30 (5.10)",
-    "domain": "Domain 5: Model Selection and Optimization",
-    "type": "single",
-    "text": "An application performs sentiment extraction on customer tweets (approx. 30 tokens each) at 50,000 requests per hour. Which design pattern provides the best cost-to-performance ratio?",
-    "options": [
-      {
-        "key": "A",
-        "text": "Send all tweets individually to Claude Opus at temperature 0"
-      },
-      {
-        "key": "B",
-        "text": "Deploy Claude 3.5 Haiku with batching or small concurrent async workers with strict output formatting"
-      },
-      {
-        "key": "C",
-        "text": "Fine-tune a 70B parameter open-source model from scratch"
-      },
-      {
-        "key": "D",
-        "text": "Chain three Claude Sonnet models in an Evaluator-Optimizer loop for each tweet"
-      }
-    ],
-    "correct": [
-      "B"
-    ],
-    "explanation": "Short, simple sentiment classification is the ideal workload for Claude Haiku: ultra-fast inference, minimal latency, and fractions of a cent per 1,000 requests. Running Opus or complex iterative chains on 30-token tweets incurs extreme, unnecessary cost.",
-    "whyNot": "A and D are massive cost overkills for trivial sentiment extraction. C involves expensive GPU cluster infrastructure and fine-tuning maintenance when an API model solves it instantly."
-  },
-  {
-    "id": "Q31 (4.5)",
-    "domain": "Domain 4: Eval, Testing, and Debugging",
-    "type": "single",
-    "text": "When evaluating an LLM application that produces structured JSON reports, what is the best testing approach?",
-    "options": [
-      {
-        "key": "A",
-        "text": "Rely solely on human manual testing before every production deployment"
-      },
-      {
-        "key": "B",
-        "text": "A two-tier evaluation suite: deterministic code assertions (schema validity, required keys, regex) combined with model-graded eval for semantic quality and depth"
-      },
-      {
-        "key": "C",
-        "text": "Ask the model whether its own output is good and accept its answer without verification"
-      },
-      {
-        "key": "D",
-        "text": "Only test in production using real customer feedback"
-      }
-    ],
-    "correct": [
-      "B"
-    ],
-    "explanation": "The industry standard eval pyramid combines fast, cheap, 100% deterministic code tests (schema validation, Pydantic parsing, non-empty fields) as the first gate, followed by LLM-as-a-judge with structured scoring rubrics for qualitative nuances.",
-    "whyNot": "A is unscalable and slow. C suffers from self-serving confirmation bias. D leads to catastrophic user-facing regressions."
-  },
-  {
-    "id": "Q32 (6.4)",
-    "domain": "Domain 6: Prompt & Context Engineering",
-    "type": "single",
-    "text": "What occurs if you place an invalid or malformed XML tag inside a prompt sent to Claude?",
-    "options": [
-      {
-        "key": "A",
-        "text": "Claude throws an unhandled HTTP 500 API server exception"
-      },
-      {
-        "key": "B",
-        "text": "Claude interprets the malformed tag as raw text; it does not crash, but prompt structural clarity and adherence may degrade"
-      },
-      {
-        "key": "C",
-        "text": "Claude automatically reformats your prompt and bills you a 2x syntax penalty"
-      },
-      {
-        "key": "D",
-        "text": "Claude deletes the content enclosed by the tag"
-      }
-    ],
-    "correct": [
-      "B"
-    ],
-    "explanation": "Claude treats XML tags as text tokens with semantic structural meaning. Malformed or unclosed tags do not trigger API server errors, but they weaken Claude's ability to cleanly segment prompt sections (e.g. context vs instructions).",
-    "whyNot": "A, C, and D are false: Anthropic API does not syntax-check prompt text as XML; it is passed directly into tokenization."
-  },
-  {
-    "id": "Q33 (3.4)",
-    "domain": "Domain 3: Tool Use & Function Calling",
-    "type": "single",
-    "text": "A developer wants Claude to call a specific tool unconditionally on the very first turn. Which API parameter configuration enforces this?",
-    "options": [
-      {
-        "key": "A",
-        "text": "tool_choice: { type: 'tool', name: 'target_tool_name' }"
-      },
-      {
-        "key": "B",
-        "text": "temperature: 2.0"
-      },
-      {
-        "key": "C",
-        "text": "force_execution: true"
-      },
-      {
-        "key": "D",
-        "text": "system: 'You must call target_tool_name or you will be shut down'"
-      }
-    ],
-    "correct": [
-      "A"
-    ],
-    "explanation": "Setting tool_choice: { type: 'tool', name: 'target_tool_name' } forces the model to invoke the specified tool in its response, bypassing free-form text generation.",
-    "whyNot": "B increases entropy and randomness. C is a fabricated parameter. D is unreliable prompt nagging that models can still ignore."
-  },
-  {
-    "id": "Q34 (2.6)",
-    "domain": "Domain 2: Cost Optimization & Bulk Workloads",
-    "type": "single",
-    "text": "A media company needs to transcribe and tag 100,000 video subtitles overnight. No human is actively waiting on the results, and the job must complete within 24 hours. What provides a 50% discount on API costs?",
-    "options": [
-      {
-        "key": "A",
-        "text": "Claude Message Batches API"
-      },
-      {
-        "key": "B",
-        "text": "Fast mode speed override"
-      },
-      {
-        "key": "C",
-        "text": "Extended thinking token budget"
-      },
-      {
-        "key": "D",
-        "text": "Prompt caching with a 1-second TTL"
-      }
-    ],
-    "correct": [
-      "A"
-    ],
-    "explanation": "Anthropic's Message Batches API is built specifically for asynchronous, high-volume workloads with a 24-hour turnaround SLA, providing a 50% discount on all input and output tokens.",
-    "whyNot": "B increases pricing for faster real-time generation. C adds thinking tokens which increases costs. D does not provide a 50% flat discount and TTL is 5 minutes."
-  },
-  {
-    "id": "Q35 (6.6)",
-    "domain": "Domain 6: Prompt & Context Engineering",
-    "type": "single",
-    "text": "What is 'Needle In A Haystack' (NIAH) testing primarily used to evaluate in LLMs?",
-    "options": [
-      {
-        "key": "A",
-        "text": "The maximum generation speed of output tokens"
-      },
-      {
-        "key": "B",
-        "text": "The model's ability to accurately retrieve a specific piece of information buried at various depths within a very long context window"
-      },
-      {
-        "key": "C",
-        "text": "The latency of the client's network connection to Anthropic's data centers"
-      },
-      {
-        "key": "D",
-        "text": "How many parallel tools can be declared in a single API call"
-      }
-    ],
-    "correct": [
-      "B"
-    ],
-    "explanation": "NIAH tests measure retrieval fidelity across context length and placement depth (beginning, middle, end). They verify that models do not lose critical facts placed deep in lengthy reference documents.",
-    "whyNot": "A, C, and D test throughput, network latency, and tool declarations, not context retrieval fidelity."
-  },
-  {
-    "id": "Q36 (4.6)",
-    "domain": "Domain 4: Agent & Workflow Architectures",
-    "type": "single",
-    "text": "Why is context compaction (summarizing or truncating conversation history) essential in long-running agent loops?",
-    "options": [
-      {
-        "key": "A",
-        "text": "To prevent context exhaustion, reduce per-turn token costs, and maintain reasoning accuracy by eliminating noisy intermediate tool outputs"
-      },
-      {
-        "key": "B",
-        "text": "Because Claude models can only remember up to 5 total words without compaction"
-      },
-      {
-        "key": "C",
-        "text": "Because compaction guarantees zero latency"
-      },
-      {
-        "key": "D",
-        "text": "To bypass Anthropic API authentication"
-      }
-    ],
-    "correct": [
-      "A"
-    ],
-    "explanation": "Uncompacted agent loops accumulate huge tool results and scratchpads, which eat context budget, inflate billing costs on every subsequent turn, and dilute attention. Compaction maintains high signal-to-noise ratio.",
-    "whyNot": "B is absurd. C is impossible. D has nothing to do with authentication."
-  },
-  {
-    "id": "Q37 (1.2)",
-    "domain": "Domain 1: Anthropic API Architecture & SDK",
-    "type": "single",
-    "text": "What is the difference between HTTP status code 429 and HTTP status code 529 in the Anthropic API?",
-    "options": [
-      {
-        "key": "A",
-        "text": "429 indicates client rate limit exceeded (RPM/TPM); 529 indicates Anthropic API server overload"
-      },
-      {
-        "key": "B",
-        "text": "429 means invalid API key; 529 means invalid model name"
-      },
-      {
-        "key": "C",
-        "text": "429 is a permanent account ban; 529 is a temporary warning"
-      },
-      {
-        "key": "D",
-        "text": "429 applies only to Haiku; 529 applies only to Opus"
-      }
-    ],
-    "correct": [
-      "A"
-    ],
-    "explanation": "HTTP 429 = Rate Limit Exceeded (client traffic exceeded organization tier limits). HTTP 529 = Overloaded (Anthropic's servers are experiencing transient capacity constraints). Both should trigger exponential backoff with jitter.",
-    "whyNot": "B describes 401 and 404 errors. C and D are completely incorrect."
-  },
-  {
-    "id": "Q38 (4.7)",
-    "domain": "Domain 4: Agent & Workflow Architectures",
-    "type": "single",
-    "text": "What is the primary risk of building an agent without an explicit termination condition or maximum iteration step limit?",
-    "options": [
-      {
-        "key": "A",
-        "text": "The agent can enter an infinite loop, continuously calling tools and consuming API credits indefinitely until funds or timeout limits are hit"
-      },
-      {
-        "key": "B",
-        "text": "The model's weights will be permanently corrupted"
-      },
-      {
-        "key": "C",
-        "text": "The agent will automatically delete the user's operating system"
-      },
-      {
-        "key": "D",
-        "text": "Anthropic API will permanently deactivate the organization account"
-      }
-    ],
-    "correct": [
-      "A"
-    ],
-    "explanation": "Agents operate in autonomous feedback loops. Without a hard max_iterations counter or clear stopping criteria, cyclical tool failures or ambiguous goals can trigger infinite invocation loops.",
-    "whyNot": "B, C, and D are fictional consequences; the actual risk is infinite looping and budget exhaustion."
-  },
-  {
-    "id": "Q39 (3.5)",
-    "domain": "Domain 3: Tool Use & Function Calling",
-    "type": "single",
-    "text": "A model invokes a tool with name: 'get_weather' and parameters {'city': 'Paris'}. In the next turn, what must the client send back to the API?",
-    "options": [
-      {
-        "key": "A",
-        "text": "A user message containing a tool_result content block matching the tool_use_id"
-      },
-      {
-        "key": "B",
-        "text": "An assistant message repeating the weather forecast"
-      },
-      {
-        "key": "C",
-        "text": "A new system prompt overwriting all previous instructions"
-      },
-      {
-        "key": "D",
-        "text": "An HTTP DELETE request to cancel the tool call"
-      }
-    ],
-    "correct": [
-      "A"
-    ],
-    "explanation": "The Anthropic tool use protocol requires that every tool_use block emitted by the assistant is answered by a corresponding tool_result content block in a user turn with matching tool_use_id.",
-    "whyNot": "B violates the conversation role turn order. C and D violate the API conversation flow."
-  },
-  {
-    "id": "Q40 (4.8)",
-    "domain": "Domain 4: Eval, Testing, and Debugging",
-    "type": "single",
-    "text": "When creating a Golden Test Dataset for automated CI/CD evals, what constitutes a good practice?",
-    "options": [
-      {
-        "key": "A",
-        "text": "Use only 2 simple test cases that are known to pass 100% of the time"
-      },
-      {
-        "key": "B",
-        "text": "Curate representative real-world user queries covering happy paths, edge cases, adversarial inputs, and format variations, with validated ground truth reference answers"
-      },
-      {
-        "key": "C",
-        "text": "Generate 1,000,000 synthetic questions without any ground truth review"
-      },
-      {
-        "key": "D",
-        "text": "Change the test inputs randomly on every CI/CD run without tracking versioning"
-      }
-    ],
-    "correct": [
-      "B"
-    ],
-    "explanation": "A high-integrity golden dataset mirrors production reality: standard requests, tricky edge cases, and safety bounds, backed by human-verified ground truth or scoring rubrics.",
-    "whyNot": "A creates false confidence. C introduces noise without ground truth. D prevents reproducible regression benchmarking."
-  },
-  {
-    "id": "Q41 (5.11)",
-    "domain": "Domain 5: Model Selection and Optimization",
-    "type": "single",
-    "text": "When should an enterprise choose Claude 3.5 Sonnet over Claude 3.5 Haiku?",
-    "options": [
-      {
-        "key": "A",
-        "text": "When the task requires complex multi-step reasoning, coding, tool orchestration, and subtle instruction nuance that exceeds Haiku's capability"
-      },
-      {
-        "key": "B",
-        "text": "When the primary goal is achieving the lowest possible API cost"
-      },
-      {
-        "key": "C",
-        "text": "When responses must return in under 200 milliseconds"
-      },
-      {
-        "key": "D",
-        "text": "When the task is simple keyword extraction"
-      }
-    ],
-    "correct": [
-      "A"
-    ],
-    "explanation": "Sonnet provides frontier-class intelligence, coding, and multi-step reasoning. Haiku is chosen for extreme speed and low cost on simpler tasks; Sonnet is the choice when reasoning depth and accuracy are non-negotiable.",
-    "whyNot": "B and C are reasons to pick Haiku. D is easily handled by Haiku."
-  },
-  {
-    "id": "Q42 (6.7)",
-    "domain": "Domain 6: Prompt & Context Engineering",
-    "type": "single",
-    "text": "How can developers protect an LLM application against prompt injection when incorporating untrusted user input?",
-    "options": [
-      {
-        "key": "A",
-        "text": "Enclose untrusted user input within dedicated XML tags (e.g., <user_input>...</user_input>) and instruct the model in the system prompt to treat content within those tags strictly as data, never as system instructions"
-      },
-      {
-        "key": "B",
-        "text": "Delete all vowels from the user's input before sending it to the model"
-      },
-      {
-        "key": "C",
-        "text": "Set temperature to 1.0"
-      },
-      {
-        "key": "D",
-        "text": "Disable tool use entirely"
-      }
-    ],
-    "correct": [
-      "A"
-    ],
-    "explanation": "Explicit XML tag encapsulation combined with unambiguous system instructions establishes clear boundaries between developer instructions and untrusted user data, mitigating indirect and direct prompt injection.",
-    "whyNot": "B destroys input readability. C increases generation randomness without improving security. D removes capabilities unnecessarily without addressing the prompt injection vector."
-  },
-  {
-    "id": "Q43 (2.12)",
-    "domain": "Domain 2: Prompt & Context Engineering",
-    "type": "single",
-    "text": "How long is the default Time-To-Live (TTL) for a prompt cache entry in the Anthropic API?",
-    "options": [
-      {
-        "key": "A",
-        "text": "5 minutes (refreshed automatically whenever the cached prefix is hit)"
-      },
-      {
-        "key": "B",
-        "text": "24 hours"
-      },
-      {
-        "key": "C",
-        "text": "30 seconds"
-      },
-      {
-        "key": "D",
-        "text": "Indefinite / Permanent"
-      }
-    ],
-    "correct": [
-      "A"
-    ],
-    "explanation": "Anthropic prompt cache entries have a 5-minute sliding TTL. Every time a request matches the cached prefix, the 5-minute timer resets, keeping active prompts in memory cost-effectively.",
-    "whyNot": "B is the SLA for the Batches API. C is too short to be viable. D is incorrect as cache memory is ephemeral."
-  },
-  {
-    "id": "Q44 (3.6)",
-    "domain": "Domain 3: Tool Use & Function Calling",
-    "type": "single",
-    "text": "In Claude's tool use capability, what is 'Parallel Tool Calling'?",
-    "options": [
-      {
-        "key": "A",
-        "text": "Claude returns multiple tool_use blocks in a single response turn when multiple independent tool actions are needed"
-      },
-      {
-        "key": "B",
-        "text": "The Anthropic API runs on multiple client laptops simultaneously"
-      },
-      {
-        "key": "C",
-        "text": "The client runs two separate API keys on the same prompt"
-      },
-      {
-        "key": "D",
-        "text": "Claude invokes tools in secret without returning tool blocks to the client"
-      }
-    ],
-    "correct": [
-      "A"
-    ],
-    "explanation": "Claude can generate multiple tool_use blocks within a single response (e.g. fetching weather for Tokyo and Paris in parallel). The client executes both tools concurrently and returns both tool_result blocks in the next turn.",
-    "whyNot": "B, C, and D are incorrect descriptions of how tool calling works."
-  },
-  {
-    "id": "Q45 (4.9)",
-    "domain": "Domain 4: Agent & Workflow Architectures",
-    "type": "single",
-    "text": "In an agentic workflow, what is the 'Human-in-the-Loop' (HITL) pattern?",
-    "options": [
-      {
-        "key": "A",
-        "text": "A human manually types every single token generated by the model"
-      },
-      {
-        "key": "B",
-        "text": "The agent executes autonomous read actions freely, but pauses before executing high-impact or irreversible tool calls (e.g. sending emails, deleting records, financial transfers) to require explicit human review and approval"
-      },
-      {
-        "key": "C",
-        "text": "A human programmer must sit next to the server hardware during runtime"
-      },
-      {
-        "key": "D",
-        "text": "The model asks the user for their password before answering any question"
-      }
-    ],
-    "correct": [
-      "B"
-    ],
-    "explanation": "HITL balances agent autonomy with enterprise governance: safe, read-only actions run autonomously, while sensitive, high-impact write operations require human verification before execution.",
-    "whyNot": "A defeats the purpose of AI automation. C is nonsensical. D is an insecure and improper practice."
-  },
-  {
-    "id": "Q46 (5.12)",
-    "domain": "Domain 5: Model Selection and Optimization",
-    "type": "single",
-    "text": "What does the 'effort' parameter control when using Claude's adaptive extended thinking?",
-    "options": [
-      {
-        "key": "A",
-        "text": "It acts as guidance (from low to high) on how much reasoning depth and token budget Claude applies before producing its final answer"
-      },
-      {
-        "key": "B",
-        "text": "It sets the GPU clock speed in the cloud data center"
-      },
-      {
-        "key": "C",
-        "text": "It forces the user to solve a CAPTCHA"
-      },
-      {
-        "key": "D",
-        "text": "It changes the model's language to Latin"
-      }
-    ],
-    "correct": [
-      "A"
-    ],
-    "explanation": "The effort parameter provides soft guidance to Claude's adaptive thinking engine, allowing developers to balance deep step-by-step reasoning against token cost and response latency.",
-    "whyNot": "B, C, and D are completely fabricated."
-  },
-  {
-    "id": "Q47 (4.10)",
-    "domain": "Domain 4: Eval, Testing, and Debugging",
-    "type": "single",
-    "text": "What is 'LLM-as-a-Judge' evaluation?",
-    "options": [
-      {
-        "key": "A",
-        "text": "An LLM sits in a legal courtroom to pass legal verdicts on developers"
-      },
-      {
-        "key": "B",
-        "text": "Using a capable frontier LLM (such as Claude 3.5 Sonnet) prompted with detailed rubrics and scoring criteria to evaluate the quality, accuracy, and tone of application outputs"
-      },
-      {
-        "key": "C",
-        "text": "An algorithm that deletes bad code automatically from GitHub"
-      },
-      {
-        "key": "D",
-        "text": "Testing models strictly by counting the number of characters in their response"
-      }
-    ],
-    "correct": [
-      "B"
-    ],
-    "explanation": "LLM-as-a-Judge leverages a powerful model to grade open-ended outputs against comprehensive evaluation rubrics, scoring dimensions like helpfulness, conciseness, correctness, and adherence.",
-    "whyNot": "A is a literal misinterpretation. C and D do not evaluate semantic output quality."
-  },
-  {
-    "id": "Q48 (6.8)",
-    "domain": "Domain 6: Prompt & Context Engineering",
-    "type": "single",
-    "text": "Why is placing instructions at the END of a long context document generally more effective than placing them at the very top?",
-    "options": [
-      {
-        "key": "A",
-        "text": "Due to the recency effect in transformer attention mechanisms, instructions placed immediately before generation have high attentional focus"
-      },
-      {
-        "key": "B",
-        "text": "Because Claude reads prompts backwards from right to left"
-      },
-      {
-        "key": "C",
-        "text": "Because placing instructions at the top causes an immediate API syntax error"
-      },
-      {
-        "key": "D",
-        "text": "Because the Anthropic API drops the first 1,000 tokens of every prompt"
-      }
-    ],
-    "correct": [
-      "A"
-    ],
-    "explanation": "Placing long reference materials first and the specific query/instructions at the end allows the model's self-attention to process instructions with the full document representation already computed, mitigating retrieval degradation.",
-    "whyNot": "B, C, and D are false."
-  },
-  {
-    "id": "Q49 (3.7)",
-    "domain": "Domain 3: Tool Use & Function Calling",
-    "type": "single",
-    "text": "When specifying descriptions for tools in the Anthropic Messages API, what is the best practice?",
-    "options": [
-      {
-        "key": "A",
-        "text": "Leave tool descriptions blank to save token costs"
-      },
-      {
-        "key": "B",
-        "text": "Provide clear, detailed descriptions explaining what the tool does, when it should be used, and the exact meaning and format of each parameter"
-      },
-      {
-        "key": "C",
-        "text": "Use obfuscated variable names so the model guesses their purpose"
-      },
-      {
-        "key": "D",
-        "text": "Copy and paste the entire application source code into every tool description"
-      }
-    ],
-    "correct": [
-      "B"
-    ],
-    "explanation": "Tool descriptions are the primary prompt context the model uses to decide whether, when, and how to invoke a tool. Clear descriptions specifying edge cases and format expectations prevent tool misuse.",
-    "whyNot": "A causes the model to guess randomly or fail to call the tool. C causes tool hallucination. D wastes context budget."
-  },
-  {
-    "id": "Q50 (1.3)",
-    "domain": "Domain 1: Anthropic API Architecture & SDK",
-    "type": "single",
-    "text": "In the Anthropic Python SDK, what does the max_retries configuration parameter do?",
-    "options": [
-      {
-        "key": "A",
-        "text": "Automatically retries transient network errors and rate limits (429, 500, 529) with exponential backoff up to the specified number of times"
-      },
-      {
-        "key": "B",
-        "text": "Retries invalid API key authentication errors indefinitely"
-      },
-      {
-        "key": "C",
-        "text": "Repeats the model's answer multiple times in the console"
-      },
-      {
-        "key": "D",
-        "text": "Restarts the operating system if a call fails"
-      }
-    ],
-    "correct": [
-      "A"
-    ],
-    "explanation": "The official SDK includes built-in retry handling for transient errors (connection errors, 429 rate limits, 5xx server errors) with exponential backoff up to max_retries (default is 2).",
-    "whyNot": "B is false (client 401 errors are non-retryable). C and D are nonsensical."
-  },
-  {
-    "id": "Q51 (4.11)",
-    "domain": "Domain 4: Agent & Workflow Architectures",
-    "type": "single",
-    "text": "An agent needs to remember user preferences across sessions separated by multiple days. Where should this persistent state be stored?",
-    "options": [
-      {
-        "key": "A",
-        "text": "Inside an external database (e.g. PostgreSQL, Redis) and retrieved dynamically into context when the user session begins"
-      },
-      {
-        "key": "B",
-        "text": "In the model's permanent weights via real-time backpropagation during the conversation"
-      },
-      {
-        "key": "C",
-        "text": "In the client browser's RAM memory without saving to disk"
-      },
-      {
-        "key": "D",
-        "text": "State cannot be preserved across sessions under any circumstances"
-      }
-    ],
-    "correct": [
-      "A"
-    ],
-    "explanation": "LLM weights are frozen at inference. Multi-session memory requires external storage (databases or key-value stores) from which relevant user state is queried and injected into the prompt when a session resumes.",
-    "whyNot": "B is impossible: inference APIs do not perform backpropagation or alter model weights. C is lost on tab close. D is false."
-  },
-  {
-    "id": "Q52 (5.13)",
-    "domain": "Domain 5: Model Selection and Optimization",
-    "type": "single",
-    "text": "A customer wants to process 10,000 documents per hour with Claude 3.5 Sonnet. They are hitting TPM (tokens per minute) rate limits. What is the immediate engineering solution before requesting a quota increase?",
-    "options": [
-      {
-        "key": "A",
-        "text": "Implement an asynchronous queue with token bucket rate-limiting and exponential backoff to smooth traffic spikes, and optimize prompt lengths"
-      },
-      {
-        "key": "B",
-        "text": "Switch to sending requests with plain HTTP GET requests without headers"
-      },
-      {
-        "key": "C",
-        "text": "Delete the system prompt to bypass all rate limits"
-      },
-      {
-        "key": "D",
-        "text": "Create 100 fake accounts to distribute the load"
-      }
-    ],
-    "correct": [
-      "A"
-    ],
-    "explanation": "Rate-limiting best practice involves client-side rate limiting (token buckets or Leaky Bucket queues) to shape traffic, along with prompt token hygiene, preventing sudden bursts from breaching tier limits.",
-    "whyNot": "B violates API requirements. C does not bypass rate limits. D violates Anthropic Terms of Service."
-  },
-  {
-    "id": "Q53 (6.9)",
-    "domain": "Domain 6: Prompt & Context Engineering",
-    "type": "single",
-    "text": "What is the primary benefit of prefilling the assistant's turn with '{' when structured JSON output is required?",
-    "options": [
-      {
-        "key": "A",
-        "text": "It forces the model to begin emitting valid JSON immediately without introductory conversational filler (e.g. 'Sure, here is your JSON:')"
-      },
-      {
-        "key": "B",
-        "text": "It reduces the price of the API call by 50%"
-      },
-      {
-        "key": "C",
-        "text": "It bypasses the need for an API key"
-      },
-      {
-        "key": "D",
-        "text": "It causes the model to output Python code instead of JSON"
-      }
-    ],
-    "correct": [
-      "A"
-    ],
-    "explanation": "Prefilling the assistant turn primes the autoregressive generation path. When the model sees '{' already started in its turn, it continues generating the JSON body directly, eliminating chat preamble.",
-    "whyNot": "B, C, and D are completely false."
-  },
-  {
-    "id": "Q54 (4.12)",
-    "domain": "Domain 4: Agent & Workflow Architectures",
-    "type": "single",
-    "text": "In the Prompt Chaining pattern, how is data passed between steps?",
-    "options": [
-      {
-        "key": "A",
-        "text": "The output of one model call is parsed, validated, and programmatically passed as input to the next model call in a sequential pipeline"
-      },
-      {
-        "key": "B",
-        "text": "All models share a single global memory space without code intervention"
-      },
-      {
-        "key": "C",
-        "text": "Data is broadcast to all models simultaneously without sequencing"
-      },
-      {
-        "key": "D",
-        "text": "Data cannot be passed between separate model calls"
-      }
-    ],
-    "correct": [
-      "A"
-    ],
-    "explanation": "Prompt Chaining decomposes a complex task into sequential, verifiable steps where the client application orchestrates passing the validated output of step N into the prompt of step N+1.",
-    "whyNot": "B describes an unmanaged state model. C describes parallelization, not chaining. D is false."
-  },
-  {
-    "id": "Q55 (5.14)",
-    "domain": "Domain 5: Model Selection and Optimization",
-    "type": "single",
-    "text": "When comparing the latency profiles of Haiku vs Sonnet vs Opus, what is the expected general order of Time-To-First-Token (TTFT) and generation speed?",
-    "options": [
-      {
-        "key": "A",
-        "text": "Haiku is fastest (lowest TTFT and highest token/s), Sonnet is balanced mid-tier, and Opus has the highest latency and deepest reasoning"
-      },
-      {
-        "key": "B",
-        "text": "Opus is fastest, Sonnet is mid-tier, Haiku is slowest"
-      },
-      {
-        "key": "C",
-        "text": "All three models have identical latency down to the millisecond"
-      },
-      {
-        "key": "D",
-        "text": "Haiku is only faster if temperature is set to 1.0"
-      }
-    ],
-    "correct": [
-      "A"
-    ],
-    "explanation": "Claude model tiers trade speed and cost for reasoning depth: Haiku offers ultra-low latency and rapid generation; Sonnet provides frontier intelligence at moderate latency; Opus offers highest reasoning at lower generation speeds.",
-    "whyNot": "B inverts model latencies. C and D are false."
-  },
-  {
-    "id": "Q56 (3.8)",
-    "domain": "Domain 3: Tool Use & Function Calling",
-    "type": "single",
-    "text": "What happens if a client receives a tool_use block from Claude but forgets to send a tool_result block in the following turn, sending regular user text instead?",
-    "options": [
-      {
-        "key": "A",
-        "text": "The API returns an HTTP 400 Bad Request error indicating that a tool_use block must be followed by a tool_result"
-      },
-      {
-        "key": "B",
-        "text": "Claude automatically executes the tool on Anthropic's cloud servers"
-      },
-      {
-        "key": "C",
-        "text": "The conversation continues normally without issue"
-      },
-      {
-        "key": "D",
-        "text": "The model hallucinates a random tool response"
-      }
-    ],
-    "correct": [
-      "A"
-    ],
-    "explanation": "Anthropic's conversation validation enforces state consistency: if the assistant's previous message contains one or more tool_use blocks, the immediately following user message MUST contain matching tool_result blocks for each tool call.",
-    "whyNot": "B is impossible. C and D violate API state validation."
-  },
-  {
-    "id": "Q57 (6.10)",
-    "domain": "Domain 6: Prompt & Context Engineering",
-    "type": "single",
-    "text": "Why is temperature 0 commonly used when evaluating models against an automated benchmark test suite?",
-    "options": [
-      {
-        "key": "A",
-        "text": "To minimize sampling variance and maximize test run reproducibility across benchmark iterations"
-      },
-      {
-        "key": "B",
-        "text": "Because temperature 0 guarantees 100% test accuracy on all questions"
-      },
-      {
-        "key": "C",
-        "text": "Because non-zero temperature disables API logging"
-      },
-      {
-        "key": "D",
-        "text": "Because temperature 0 reduces token consumption by 90%"
-      }
-    ],
-    "correct": [
-      "A"
-    ],
-    "explanation": "Setting temperature to 0 minimizes greedy sampling variance, producing the most predictable and reproducible responses possible for eval regression tracking.",
-    "whyNot": "B is false: temperature 0 does not make wrong answers right. C and D are false."
-  },
-  {
-    "id": "Q58 (4.13)",
-    "domain": "Domain 4: Agent & Workflow Architectures",
-    "type": "single",
-    "text": "What is an advantage of the 'Parallelization' workflow pattern over a single sequential agent?",
-    "options": [
-      {
-        "key": "A",
-        "text": "It allows independent subtasks (e.g. translating 5 chapters, or running multiple voting judges) to execute concurrently, drastically cutting total wall-clock latency"
-      },
-      {
-        "key": "B",
-        "text": "It consumes zero tokens"
-      },
-      {
-        "key": "C",
-        "text": "It eliminates the need for an Anthropic API key"
-      },
-      {
-        "key": "D",
-        "text": "It guarantees that no model will ever make an error"
-      }
-    ],
-    "correct": [
-      "A"
-    ],
-    "explanation": "Parallelization (sectioning or voting) dispatches independent tasks simultaneously, reducing overall completion time from the sum of task durations to the duration of the slowest single task.",
-    "whyNot": "B, C, and D are false."
-  },
-  {
-    "id": "Q59 (2.13)",
-    "domain": "Domain 2: Prompt & Context Engineering",
-    "type": "single",
-    "text": "In long multi-turn conversations, what is the 'sliding window' context management strategy?",
-    "options": [
-      {
-        "key": "A",
-        "text": "Retaining only the most recent K turns while truncating or summarizing older history to keep total tokens comfortably within limits"
-      },
-      {
-        "key": "B",
-        "text": "Moving the browser window across multiple physical computer monitors"
-      },
-      {
-        "key": "C",
-        "text": "Deleting random words throughout the document"
-      },
-      {
-        "key": "D",
-        "text": "Switching API keys every 5 minutes"
-      }
-    ],
-    "correct": [
-      "A"
-    ],
-    "explanation": "Sliding window keeps the system prompt and the latest N messages, shedding distant conversation turns that are no longer relevant, bounding memory usage and token costs.",
-    "whyNot": "B is a literal pun. C and D are invalid engineering approaches."
-  },
-  {
-    "id": "Q60 (5.15)",
-    "domain": "Domain 5: Model Selection and Optimization",
-    "type": "single",
-    "text": "An application has a strict SLA requiring all API calls to finish in under 1.5 seconds. What is the most effective strategy to ensure SLA compliance?",
-    "options": [
-      {
-        "key": "A",
-        "text": "Use Claude 3.5 Haiku, set an appropriate max_tokens limit, stream responses, and minimize uncached prompt length"
-      },
-      {
-        "key": "B",
-        "text": "Use Claude Opus with extended thinking enabled and a 10,000 thinking token budget"
-      },
-      {
-        "key": "C",
-        "text": "Route all requests to the Message Batches API"
-      },
-      {
-        "key": "D",
-        "text": "Send requests sequentially in a single thread without timeouts"
-      }
-    ],
-    "correct": [
-      "A"
-    ],
-    "explanation": "To meet tight sub-1.5s SLAs: pick the fastest model tier (Haiku), bound output length (max_tokens), leverage prompt caching to minimize TTFT, and stream tokens for immediate user perception.",
-    "whyNot": "B has higher TTFT and generation latency. C has up to 24-hour turnaround. D provides no latency guarantees."
+    "explanation": "Pinning gives control over change; snapshots are still retired eventually and still need monitoring.",
+    "whyNot": "Refer to the correct rationale above."
   }
 ];
 
